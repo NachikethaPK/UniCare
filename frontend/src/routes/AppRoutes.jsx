@@ -26,6 +26,7 @@ function AppRoutes() {
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/records" element={<HealthRecords />} />
         <Route path="/blood" element={<BloodDonation />} />
+        <Route path="/blood-donation" element={<BloodDonation />} />
         <Route path="/pets" element={<PetDashboard />} />
         <Route path="/ai" element={<AIAssistant />} />
         <Route path="/profile" element={<Profile />} />

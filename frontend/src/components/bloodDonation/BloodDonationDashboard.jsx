@@ -1,298 +1,412 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useBloodDonation } from "../../context/BloodDonationContext";
-import { FaTint, FaSearch, FaUserPlus, FaHospital, FaPhone, FaHeartbeat } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
+import HospitalMapRadar from "./HospitalMapRadar";
+import HospitalPortalDesk from "./HospitalPortalDesk";
+import {
+  FiMapPin,
+  FiNavigation,
+  FiPhone,
+  FiSearch,
+  FiUserPlus,
+  FiPlusSquare,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiActivity,
+  FiHeart,
+  FiCompass,
+  FiLayers,
+} from "react-icons/fi";
+import { FaTint, FaHospital, FaHeartbeat } from "react-icons/fa";
 
-const initialRequest = { patient: "", bloodGroup: "A+", hospital: "", location: "", contact: "", urgency: "Normal" };
-const initialDonor = { name: "", bloodGroup: "A+", age: "", location: "", phone: "" };
+const initialDonor = { name: "", bloodGroup: "O+", age: "", location: "Bangalore", phone: "" };
 
 export default function BloodDonationDashboard() {
-  const { donors, requests, addDonor, addRequest, updateRequestStatus } = useBloodDonation();
-  const [group, setGroup] = useState("");
-  const [location, setLocation] = useState("");
-  const [request, setRequest] = useState(initialRequest);
-  const [donor, setDonor] = useState(initialDonor);
-  const [notice, setNotice] = useState("");
+  const {
+    hospitalsWithStats,
+    userLocation,
+    setUserLocation,
+    donors,
+    requests,
+    addDonor,
+  } = useBloodDonation();
+  const { user, isHospital } = useAuth();
 
-  const matches = donors.filter(
-    (d) => (!group || d.bloodGroup === group) && d.location.toLowerCase().includes(location.toLowerCase())
-  );
+  const [activeTab, setActiveTab] = useState("map"); // "map", "hospital_portal", "donors"
+  const [selectedHospitalId, setSelectedHospitalId] = useState(null);
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState("");
 
-  const handleRequestSubmit = (e) => {
-    e.preventDefault();
-    addRequest(request);
-    setRequest(initialRequest);
-    setNotice("Blood request submitted successfully!");
-    setTimeout(() => setNotice(""), 3000);
+  // Donor Search State
+  const [donorGroup, setDonorGroup] = useState("");
+  const [donorLocationQuery, setDonorLocationQuery] = useState("");
+  const [donorForm, setDonorForm] = useState(initialDonor);
+  const [donorNotice, setDonorNotice] = useState("");
+
+  // Geolocation trigger
+  const handleLocateMe = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            name: "Live GPS Location",
+            isDetected: true,
+          });
+        },
+        (err) => {
+          alert("GPS detection unavailable or denied. Using default city coordinates.");
+        },
+        { enableHighAccuracy: true }
+      );
+    }
   };
 
   const handleDonorSubmit = (e) => {
     e.preventDefault();
-    addDonor(donor);
-    setDonor(initialDonor);
-    setNotice("Thank you! You are registered as a blood donor.");
-    setTimeout(() => setNotice(""), 3000);
+    addDonor(donorForm);
+    setDonorForm(initialDonor);
+    setDonorNotice("Thank you! You are now registered on the UniCare emergency blood donor network.");
+    setTimeout(() => setDonorNotice(""), 4000);
   };
+
+  const filteredDonors = donors.filter(
+    (d) =>
+      (!donorGroup || d.bloodGroup === donorGroup) &&
+      d.location.toLowerCase().includes(donorLocationQuery.toLowerCase())
+  );
+
+  // Overall statistics
+  const totalUnitsNeeded = hospitalsWithStats.reduce((acc, h) => acc + (h.totalUnitsNeeded || 0), 0);
+  const criticalHospitalsCount = hospitalsWithStats.filter((h) => h.hasCritical).length;
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-red-600 to-rose-700 p-6 md:p-8 rounded-3xl text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-r from-red-600 via-rose-700 to-slate-900 p-6 md:p-8 rounded-3xl text-white shadow-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-          <span className="text-xs uppercase font-bold tracking-wider px-3 py-1 bg-white/20 rounded-full">
-            Lifesaving Service
-          </span>
-          <h1 className="text-2xl md:text-3xl font-extrabold mt-2">Blood Donation Network</h1>
-          <p className="text-red-100 text-sm mt-1">Connect with verified blood donors or post urgent blood requests instantly.</p>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[11px] uppercase font-black tracking-wider px-3 py-1 bg-white/20 rounded-full backdrop-blur-xs flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span>Google Maps Integrated Radar</span>
+            </span>
+            {isHospital && (
+              <span className="text-[11px] uppercase font-bold tracking-wider px-3 py-1 bg-white/30 rounded-full">
+                Logged in as Hospital: {user.name}
+              </span>
+            )}
+          </div>
+          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight">
+            Emergency Blood Dispatch & Hospital Radar
+          </h1>
+          <p className="text-red-100 text-xs md:text-sm mt-1 max-w-2xl leading-relaxed">
+            Live geographic mapping connecting voluntary donors with verified hospitals facing acute blood shortages. Track required blood types, open hospital requests, and navigate via Google Maps.
+          </p>
         </div>
-        <div className="bg-white/10 backdrop-blur p-4 rounded-2xl border border-white/20 text-center shrink-0">
-          <p className="text-2xl font-black text-white">{donors.length}</p>
-          <p className="text-xs text-red-100 font-semibold">Active Donors Nearby</p>
+
+        {/* Live Metrics Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2.5 shrink-0 w-full lg:w-auto">
+          <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-center">
+            <p className="text-2xl font-black text-white">{hospitalsWithStats.length}</p>
+            <p className="text-[10px] text-red-200 font-bold uppercase">Hospitals on Radar</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-center">
+            <p className="text-2xl font-black text-amber-300">{totalUnitsNeeded}</p>
+            <p className="text-[10px] text-red-200 font-bold uppercase">Units Shortage</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-center">
+            <p className="text-2xl font-black text-rose-300">{criticalHospitalsCount}</p>
+            <p className="text-[10px] text-red-200 font-bold uppercase">Critical Centers</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-center">
+            <p className="text-2xl font-black text-emerald-300">{donors.length}</p>
+            <p className="text-[10px] text-red-200 font-bold uppercase">Active Donors</p>
+          </div>
         </div>
       </div>
 
-      {notice && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-semibold animate-in fade-in">
-          {notice}
+      {/* Main Tab Navigation */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-2">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab("map")}
+            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition ${
+              activeTab === "map"
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-white text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <FiCompass className="w-4 h-4 text-red-500" />
+            <span>Google Maps Radar & Nearest Hospitals</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("hospital_portal")}
+            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition ${
+              activeTab === "hospital_portal"
+                ? "bg-rose-700 text-white shadow-sm"
+                : "bg-white text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <FiPlusSquare className="w-4 h-4 text-rose-500" />
+            <span>Hospital Dispatch Desk {isHospital ? "(Active)" : "(Sign In)"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("donors")}
+            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition ${
+              activeTab === "donors"
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-white text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <FiUserPlus className="w-4 h-4 text-blue-500" />
+            <span>Donor Registry & Community</span>
+          </button>
+        </div>
+
+        {/* Hospital Portal Link for Unauthenticated / Non-Hospital visitors */}
+        {!isHospital && (
+          <Link
+            to="/login?role=hospital"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition"
+          >
+            <FaHospital className="w-3.5 h-3.5" />
+            <span>Hospital Portal Sign In &rarr;</span>
+          </Link>
+        )}
+      </div>
+
+      {/* Tab 1: Google Maps & Nearest Hospitals Radar */}
+      {activeTab === "map" && (
+        <HospitalMapRadar
+          hospitals={hospitalsWithStats}
+          userLocation={userLocation}
+          onLocateUser={handleLocateMe}
+          selectedHospitalId={selectedHospitalId}
+          onSelectHospital={(id) => setSelectedHospitalId(id)}
+          selectedBloodGroup={selectedBloodGroup}
+          onSelectBloodGroup={(grp) => setSelectedBloodGroup(grp)}
+        />
+      )}
+
+      {/* Tab 2: Hospital Sign In & Post Blood Requests Portal */}
+      {activeTab === "hospital_portal" && (
+        <HospitalPortalDesk
+          onFocusMap={(hospId) => {
+            setSelectedHospitalId(hospId);
+            setActiveTab("map");
+          }}
+        />
+      )}
+
+      {/* Tab 3: Donor Registration & Community Directory */}
+      {activeTab === "donors" && (
+        <div className="space-y-6">
+          {donorNotice && (
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-2">
+              <FiCheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{donorNotice}</span>
+            </div>
+          )}
+
+          <div className="grid gap-6 lg:grid-cols-12 items-start">
+            {/* Donor Registration Form (5 cols) */}
+            <form
+              onSubmit={handleDonorSubmit}
+              className="lg:col-span-5 space-y-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-200/90"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span className="p-2 bg-red-100 text-red-600 rounded-xl">
+                  <FiHeart className="w-4 h-4" />
+                </span>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">Register as a Blood Donor</h3>
+                  <p className="text-xs text-slate-500">
+                    Be on-call for emergency blood dispatch near your locality
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Full Name</label>
+                <input
+                  required
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+                  placeholder="e.g. Rahul Sharma"
+                  value={donorForm.name}
+                  onChange={(e) => setDonorForm({ ...donorForm, name: e.target.value })}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Blood Group</label>
+                  <select
+                    className="w-full rounded-xl border border-slate-200 p-2.5 text-xs font-bold text-red-600 focus:ring-2 focus:ring-red-500 outline-none"
+                    value={donorForm.bloodGroup}
+                    onChange={(e) => setDonorForm({ ...donorForm, bloodGroup: e.target.value })}
+                  >
+                    {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((x) => (
+                      <option key={x} value={x}>
+                        {x}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Age</label>
+                  <input
+                    required
+                    type="number"
+                    min="18"
+                    max="65"
+                    className="w-full rounded-xl border border-slate-200 p-2.5 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+                    placeholder="e.g. 25"
+                    value={donorForm.age}
+                    onChange={(e) => setDonorForm({ ...donorForm, age: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Location / Area</label>
+                <input
+                  required
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+                  placeholder="e.g. Indiranagar, Bangalore"
+                  value={donorForm.location}
+                  onChange={(e) => setDonorForm({ ...donorForm, location: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Phone Number</label>
+                <input
+                  required
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+                  placeholder="+91 98765 43210"
+                  value={donorForm.phone}
+                  onChange={(e) => setDonorForm({ ...donorForm, phone: e.target.value })}
+                />
+              </div>
+
+              <button className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 py-3 font-bold text-xs text-white transition shadow-sm">
+                Complete Donor Registration
+              </button>
+            </form>
+
+            {/* Active Donor Directory (7 cols) */}
+            <div className="lg:col-span-7 bg-white p-6 rounded-3xl shadow-sm border border-slate-200/90 space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                  <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <FiSearch className="text-red-600" /> Community Donors Directory
+                  </h3>
+                  <p className="text-xs text-slate-500">Contact verified donors on stand-by</p>
+                </div>
+                <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                  {filteredDonors.length} Donors
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="relative flex-1">
+                  <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                  <input
+                    className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-red-500 outline-none"
+                    placeholder="Filter by locality (e.g. Koramangala)"
+                    value={donorLocationQuery}
+                    onChange={(e) => setDonorLocationQuery(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-red-500 outline-none font-bold"
+                  value={donorGroup}
+                  onChange={(e) => setDonorGroup(e.target.value)}
+                >
+                  <option value="">All Groups</option>
+                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((x) => (
+                    <option key={x} value={x}>
+                      {x}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 max-h-[380px] overflow-y-auto pr-1">
+                {filteredDonors.map((d) => (
+                  <div
+                    key={d.id}
+                    className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-xs">{d.name}</h4>
+                        <p className="text-[10px] text-slate-500">{d.location}</p>
+                      </div>
+                      <span className="text-xs font-black text-red-600 bg-red-100 px-2 py-0.5 rounded-lg">
+                        {d.bloodGroup}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-slate-200/60 flex justify-between items-center text-[11px]">
+                      <a
+                        href={`tel:${d.phone}`}
+                        className="text-slate-700 hover:text-red-600 font-semibold flex items-center gap-1"
+                      >
+                        <FiPhone className="w-3 h-3 text-red-500" />
+                        <span>{d.phone}</span>
+                      </a>
+                      <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        {d.availability || "Available"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Find Donors Section */}
-      <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <FaSearch className="text-red-600 text-lg" /> Find Blood Donors
-          </h2>
-          <span className="text-xs font-semibold text-slate-400">Filtering {matches.length} donors</span>
-        </div>
+      {/* Partner Blood Banks Section */}
+      <section className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200/90">
+        <h3 className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <FaHospital className="text-red-600" /> Partner Blood Transfusion Centers & Helplines
+        </h3>
+        <p className="text-xs text-slate-500 mb-4">
+          Government and institutional blood banks operational 24/7 for critical platelet and plasma units
+        </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="relative flex-1">
-            <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-            <input
-              className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white outline-none"
-              placeholder="Search by location (e.g. Bangalore, Indiranagar)"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
-          </div>
-          <select
-            className="px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none"
-            value={group}
-            onChange={(e) => setGroup(e.target.value)}
-          >
-            <option value="">All Blood Groups</option>
-            {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((x) => (
-              <option key={x} value={x}>
-                {x}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {matches.map((d) => (
-            <article key={d.id} className="rounded-2xl border border-slate-200 p-4 hover:border-red-400 transition bg-slate-50/50">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-slate-800 text-base">{d.name}</h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{d.location}</p>
-                </div>
-                <span className="text-xl font-black text-red-600 bg-red-50 px-2.5 py-1 rounded-xl border border-red-100">
-                  {d.bloodGroup}
-                </span>
-              </div>
-              <div className="mt-3 pt-3 border-t border-slate-200/60 flex justify-between items-center text-xs">
-                <span className="flex items-center gap-1.5 font-semibold text-slate-700">
-                  <FaPhone className="text-red-500" /> {d.phone}
-                </span>
-                <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">
-                  {d.availability || "Available"}
-                </span>
-              </div>
-            </article>
-          ))}
-          {!matches.length && (
-            <p className="col-span-full py-8 text-center text-slate-500 text-sm">No donors found matching criteria.</p>
-          )}
-        </div>
-      </section>
-
-      {/* Forms Grid: Request Blood & Register Donor */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Request Blood Form */}
-        <form onSubmit={handleRequestSubmit} className="space-y-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <FaTint className="text-red-600" /> Submit Blood Request
-          </h2>
-
-          <input
-            required
-            className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-            placeholder="Patient Name"
-            value={request.patient}
-            onChange={(e) => setRequest({ ...request, patient: e.target.value })}
-          />
-
-          <div className="grid grid-cols-2 gap-3">
-            <select
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-              value={request.bloodGroup}
-              onChange={(e) => setRequest({ ...request, bloodGroup: e.target.value })}
-            >
-              {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((x) => (
-                <option key={x} value={x}>{x}</option>
-              ))}
-            </select>
-
-            <select
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-              value={request.urgency}
-              onChange={(e) => setRequest({ ...request, urgency: e.target.value })}
-            >
-              <option value="Normal">Normal Urgency</option>
-              <option value="Urgent">Urgent Priority</option>
-            </select>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+            <h4 className="font-bold text-slate-900 text-xs">Karnataka Red Cross Blood Centre</h4>
+            <p className="text-[11px] text-slate-500 mt-1">24/7 Voluntary Blood & Platelet Bank</p>
+            <p className="text-xs font-bold text-red-600 mt-2 flex items-center gap-1">
+              <FiPhone className="w-3.5 h-3.5" /> 080-2226 8435 / Toll Free 108
+            </p>
           </div>
 
-          <input
-            required
-            className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-            placeholder="Hospital Name (e.g. Apollo Hospital)"
-            value={request.hospital}
-            onChange={(e) => setRequest({ ...request, hospital: e.target.value })}
-          />
-
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              required
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-              placeholder="City / Area"
-              value={request.location}
-              onChange={(e) => setRequest({ ...request, location: e.target.value })}
-            />
-            <input
-              required
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-              placeholder="Contact Number"
-              value={request.contact}
-              onChange={(e) => setRequest({ ...request, contact: e.target.value })}
-            />
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+            <h4 className="font-bold text-slate-900 text-xs">Victoria Hospital BMCRI Blood Bank</h4>
+            <p className="text-[11px] text-slate-500 mt-1">State Referral Blood Component Facility</p>
+            <p className="text-xs font-bold text-red-600 mt-2 flex items-center gap-1">
+              <FiPhone className="w-3.5 h-3.5" /> 080-2670 1150 (Ext 204)
+            </p>
           </div>
 
-          <button className="w-full rounded-xl bg-red-600 hover:bg-red-700 py-3 font-semibold text-white transition shadow-sm">
-            Post Blood Request
-          </button>
-        </form>
-
-        {/* Register Donor Form */}
-        <form onSubmit={handleDonorSubmit} className="space-y-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <FaUserPlus className="text-red-600" /> Register as a Blood Donor
-          </h2>
-
-          <input
-            required
-            className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-            placeholder="Full Name"
-            value={donor.name}
-            onChange={(e) => setDonor({ ...donor, name: e.target.value })}
-          />
-
-          <div className="grid grid-cols-2 gap-3">
-            <select
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-              value={donor.bloodGroup}
-              onChange={(e) => setDonor({ ...donor, bloodGroup: e.target.value })}
-            >
-              {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((x) => (
-                <option key={x} value={x}>{x}</option>
-              ))}
-            </select>
-
-            <input
-              required
-              type="number"
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-              placeholder="Age"
-              value={donor.age}
-              onChange={(e) => setDonor({ ...donor, age: e.target.value })}
-            />
-          </div>
-
-          <input
-            required
-            className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-            placeholder="Location / Area"
-            value={donor.location}
-            onChange={(e) => setDonor({ ...donor, location: e.target.value })}
-          />
-
-          <input
-            required
-            className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none"
-            placeholder="Phone Number"
-            value={donor.phone}
-            onChange={(e) => setDonor({ ...donor, phone: e.target.value })}
-          />
-
-          <button className="w-full rounded-xl bg-slate-800 hover:bg-slate-900 py-3 font-semibold text-white transition shadow-sm">
-            Register Me as Donor
-          </button>
-        </form>
-      </div>
-
-      {/* Blood Requests Status Tracker */}
-      <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <FaHeartbeat className="text-red-600" /> Active Blood Requests Status Tracker
-        </h2>
-        <div className="space-y-3">
-          {requests.map((r) => (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-slate-200 p-4 bg-slate-50/50" key={r.id}>
-              <div>
-                <span className="font-bold text-slate-800 text-sm">{r.patient}</span>
-                <span className="ml-2 font-black text-red-600 bg-red-100 px-2 py-0.5 rounded-lg text-xs">{r.bloodGroup}</span>
-                <p className="text-xs text-slate-500 mt-1">
-                  Hospital: {r.hospital} · Contact: {r.contact} · Urgency: <span className="font-semibold">{r.urgency}</span>
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-semibold text-slate-500">Status:</label>
-                <select
-                  className="rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-red-500 outline-none bg-white"
-                  value={r.status}
-                  onChange={(e) => updateRequestStatus(r.id, e.target.value)}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Accepted">Accepted</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
-              </div>
-            </div>
-          ))}
-          {!requests.length && <p className="text-slate-500 text-sm">No blood requests submitted yet.</p>}
-        </div>
-      </section>
-
-      {/* Partner Blood Banks */}
-      <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h2 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <FaHospital className="text-red-600" /> Partner Blood Banks & Emergency Centres
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-            <h4 className="font-bold text-slate-800 text-sm">City Blood Bank</h4>
-            <p className="text-xs text-slate-500 mt-1">24/7 Supply · Helpline: 080-22345678</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-            <h4 className="font-bold text-slate-800 text-sm">Central Hospital Blood Centre</h4>
-            <p className="text-xs text-slate-500 mt-1">Platelets & Plasma · Helpline: 080-33456789</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-            <h4 className="font-bold text-slate-800 text-sm">Red Cross Blood Bank</h4>
-            <p className="text-xs text-slate-500 mt-1">Voluntary Donation · Helpline: 108</p>
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+            <h4 className="font-bold text-slate-900 text-xs">Narayana Health Central Blood Bank</h4>
+            <p className="text-[11px] text-slate-500 mt-1">Specialized Cardiac & Pediatric Units</p>
+            <p className="text-xs font-bold text-red-600 mt-2 flex items-center gap-1">
+              <FiPhone className="w-3.5 h-3.5" /> 080-7122 2233
+            </p>
           </div>
         </div>
       </section>
