@@ -11,6 +11,7 @@ import {
   FiPlusSquare,
   FiCheckCircle,
 } from "react-icons/fi";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
 function Login() {
   const [roleTab, setRoleTab] = useState("patient"); // "patient" or "hospital"
@@ -53,7 +54,10 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6 py-12 relative">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-6">

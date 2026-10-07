@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FiMenu, FiX, FiActivity, FiArrowRight } from "react-icons/fi";
+import ThemeToggle from "../common/ThemeToggle";
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -52,6 +53,7 @@ function Navbar() {
 
         {/* Action Controls */}
         <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           {user ? (
             <>
               <Link
@@ -86,14 +88,17 @@ function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setMobileMenu(!mobileMenu)}
-          className="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
-          aria-label="Toggle navigation menu"
-        >
-          {mobileMenu ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
-        </button>
+        {/* Mobile Right Controls */}
+        <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenu(!mobileMenu)}
+            className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenu ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer */}
