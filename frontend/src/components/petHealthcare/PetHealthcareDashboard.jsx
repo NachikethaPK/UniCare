@@ -25,7 +25,9 @@ import {
   FaPrescriptionBottleAlt,
   FaXRay,
   FaNotesMedical,
-  FaFileMedical
+  FaFileMedical,
+  FaMapMarkerAlt,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 
 const categories = ["Vaccination History", "Prescriptions", "Scan Reports", "Lab Reports", "Medical Documents"];
@@ -136,6 +138,40 @@ export default function PetHealthcareDashboard() {
   });
 
   const [notice, setNotice] = useState("");
+
+  // --- Nearby Vets (Google Maps) ---
+  const [showNearbyVets, setShowNearbyVets] = useState(false);
+  const [vetMapQuery, setVetMapQuery] = useState("veterinary+clinic+near+me");
+  const [locating, setLocating] = useState(false);
+
+  const handleFindNearbyVets = () => {
+    if (showNearbyVets) {
+      setShowNearbyVets(false);
+      return;
+    }
+    setLocating(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          setVetMapQuery(`veterinary+clinic+near+${latitude},${longitude}`);
+          setShowNearbyVets(true);
+          setLocating(false);
+        },
+        () => {
+          // Fallback – just use generic query
+          setVetMapQuery("veterinary+clinic+near+me");
+          setShowNearbyVets(true);
+          setLocating(false);
+        },
+        { timeout: 8000 }
+      );
+    } else {
+      setVetMapQuery("veterinary+clinic+near+me");
+      setShowNearbyVets(true);
+      setLocating(false);
+    }
+  };
 
   const petVaccinations = vaccinations.filter((v) => (v.petId || v.pet) === (activePet.id || activePet._id));
   const petAppointments = appointments.filter((a) => (a.petId || a.pet) === (activePet.id || activePet._id));
@@ -416,6 +452,24 @@ export default function PetHealthcareDashboard() {
             <p className="text-lg font-black text-emerald-600">{petRecords.length}</p>
           </div>
 
+          <button
+            onClick={handleFindNearbyVets}
+            disabled={locating}
+            className={`px-3.5 py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition shrink-0 ${
+              showNearbyVets
+                ? "bg-teal-600 text-white shadow-md"
+                : "bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200"
+            }`}
+            title="Find nearby veterinary clinics on Google Maps"
+          >
+            {locating ? (
+              <FaSpinner className="text-xs animate-spin" />
+            ) : (
+              <FaMapMarkerAlt className="text-xs" />
+            )}
+            <span>{showNearbyVets ? "Hide Map" : "Nearby Vets"}</span>
+          </button>
+
           {pets.length > 1 && (
             <button
               onClick={() => {
@@ -434,6 +488,43 @@ export default function PetHealthcareDashboard() {
           )}
         </div>
       </section>
+
+      {/* Nearby Vets – Collapsible Google Maps Panel */}
+      {showNearbyVets && (
+        <section className="bg-white rounded-3xl shadow-sm border border-teal-100 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-teal-100 bg-teal-50/50">
+            <div className="flex items-center gap-2">
+              <FaMapMarkerAlt className="text-teal-600 text-sm" />
+              <h3 className="text-sm font-bold text-slate-800">Nearby Veterinary Clinics</h3>
+              <span className="text-[10px] font-medium text-teal-600 bg-teal-100 px-2 py-0.5 rounded-full">Google Maps</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href={`https://www.google.com/maps/search/${vetMapQuery}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-teal-700 hover:text-teal-900 font-semibold flex items-center gap-1 transition"
+              >
+                Open in Google Maps <FaExternalLinkAlt className="text-[9px]" />
+              </a>
+              <button
+                onClick={() => setShowNearbyVets(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+              >
+                <FaTimes className="text-xs" />
+              </button>
+            </div>
+          </div>
+          <iframe
+            title="Nearby Veterinary Clinics"
+            src={`https://www.google.com/maps?q=${vetMapQuery}&output=embed`}
+            className="w-full h-[340px] border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+        </section>
+      )}
 
       {/* ---------------- Pet Medical Records Section (OCR & Chronological Vault) ---------------- */}
       <section className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-5">
