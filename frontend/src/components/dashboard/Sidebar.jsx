@@ -8,6 +8,7 @@ import {
   FiHeart,
   FiCpu,
   FiUser,
+  FiUsers,
   FiLogOut,
   FiX,
   FiActivity,
@@ -55,8 +56,13 @@ function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
       path: "/ai",
     },
     {
-      name: "Profile & Family",
+      name: "Personal Details",
       icon: <FiUser className="w-4 h-4" />,
+      path: "/personal-details",
+    },
+    {
+      name: "Family Vault",
+      icon: <FiUsers className="w-4 h-4" />,
       path: "/profile",
     },
   ];

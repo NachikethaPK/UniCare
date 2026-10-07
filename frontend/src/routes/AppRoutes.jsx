@@ -10,6 +10,7 @@ import BloodDonation from "../pages/BloodDonation/BloodDonation";
 import PetDashboard from "../pages/PetProfile/PetDashboard";
 import AIAssistant from "../pages/AIAssistant/AIAssistant";
 import Profile from "../pages/HumanProfile/Profile";
+import PersonalDetails from "../pages/PersonalDetails/PersonalDetails";
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
         <Route path="/pets" element={<PetDashboard />} />
         <Route path="/ai" element={<AIAssistant />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/personal-details" element={<PersonalDetails />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

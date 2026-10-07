@@ -121,12 +121,20 @@ function Topbar({ onToggleMobile = () => {}, pageTitle = "Dashboard" }) {
           {showUserMenu && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 p-1.5 z-50">
               <Link
+                to="/personal-details"
+                onClick={() => setShowUserMenu(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
+              >
+                <FiUser className="w-3.5 h-3.5 text-slate-400" />
+                <span>Personal Details</span>
+              </Link>
+              <Link
                 to="/profile"
                 onClick={() => setShowUserMenu(false)}
                 className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
               >
                 <FiUser className="w-3.5 h-3.5 text-slate-400" />
-                <span>Profile Settings</span>
+                <span>Family Vault</span>
               </Link>
               <div className="h-px bg-slate-100 my-1" />
               <button

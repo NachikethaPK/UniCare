@@ -6,6 +6,7 @@ import { FaUsers, FaKey, FaLock, FaUnlock, FaPlus, FaCopy, FaCheckCircle, FaShie
 export default function FamilySharingSettings() {
   const { 
     familyVault, 
+    updateHouseholdName,
     profiles, 
     auditLogs, 
     addFamilyMemberProfile, 
@@ -15,6 +16,9 @@ export default function FamilySharingSettings() {
   } = useFamily();
 
   const { pets, addPet, deletePet } = usePets();
+
+  const [editingFamilyName, setEditingFamilyName] = useState(false);
+  const [familyNameInput, setFamilyNameInput] = useState(familyVault?.householdName || "");
 
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [newMember, setNewMember] = useState({ name: "", relationship: "Spouse", age: "", bloodGroup: "O+", pin: "" });
@@ -91,6 +95,14 @@ export default function FamilySharingSettings() {
     }
   };
 
+  const handleSaveFamilyName = (e) => {
+    e.preventDefault();
+    updateHouseholdName(familyNameInput.trim());
+    setEditingFamilyName(false);
+    setNotice("Family vault name updated successfully!");
+    setTimeout(() => setNotice(""), 3000);
+  };
+
   return (
     <div className="space-y-6">
       {notice && (
@@ -102,11 +114,62 @@ export default function FamilySharingSettings() {
 
       {/* Family Vault Invite Code Card */}
       <div className="bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <span className="text-xs uppercase font-extrabold tracking-wider px-3 py-1 bg-white/10 rounded-full text-indigo-200 border border-white/10">
-            Family Account Vault
-          </span>
-          <h2 className="text-2xl md:text-3xl font-extrabold mt-2">{familyVault.householdName || "Family Vault"}</h2>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs uppercase font-extrabold tracking-wider px-3 py-1 bg-white/10 rounded-full text-indigo-200 border border-white/10">
+              Family Account Vault
+            </span>
+            {!editingFamilyName && (
+              <button
+                onClick={() => {
+                  setFamilyNameInput(familyVault?.householdName || "");
+                  setEditingFamilyName(true);
+                }}
+                className="text-xs bg-white/15 hover:bg-white/25 text-white font-semibold px-2.5 py-1 rounded-lg transition flex items-center gap-1.5"
+                title="Change Family Name"
+              >
+                <FaEdit className="text-[11px]" />
+                <span>{familyVault?.householdName ? "Edit Family Name" : "+ Set Family Name"}</span>
+              </button>
+            )}
+          </div>
+
+          {editingFamilyName ? (
+            <form onSubmit={handleSaveFamilyName} className="mt-3 flex flex-wrap items-center gap-2 max-w-md">
+              <input
+                type="text"
+                value={familyNameInput}
+                onChange={(e) => setFamilyNameInput(e.target.value)}
+                placeholder="Enter Family Name (or leave blank)"
+                className="bg-white/15 border border-white/30 rounded-xl px-3 py-1.5 text-white placeholder-indigo-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-white/50 flex-1 min-w-[200px]"
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition shadow"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingFamilyName(false)}
+                className="bg-white/10 hover:bg-white/20 text-indigo-200 font-semibold px-3 py-1.5 rounded-xl text-xs transition"
+              >
+                Cancel
+              </button>
+            </form>
+          ) : (
+            <h2 className="text-2xl md:text-3xl font-extrabold mt-2">
+              {familyVault?.householdName ? (
+                familyVault.householdName
+              ) : (
+                <span className="text-indigo-300/80 italic font-semibold text-xl md:text-2xl">
+                  (No family name set)
+                </span>
+              )}
+            </h2>
+          )}
+
           <p className="text-indigo-200 text-xs md:text-sm mt-1 max-w-xl">
             Share access safely with your whole family. Everyone has access to all features while individual health logs remain organized per family member.
           </p>

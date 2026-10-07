@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
-import { FaUser, FaUsers, FaPhoneAlt, FaLock, FaBell, FaCheckCircle, FaShieldAlt } from "react-icons/fa";
+import { FaUser, FaUsers, FaPhoneAlt, FaLock, FaBell, FaCheckCircle, FaShieldAlt, FaExternalLinkAlt } from "react-icons/fa";
 import FamilySharingSettings from "./FamilySharingSettings";
 
 export default function ProfileDashboard() {
@@ -21,6 +22,20 @@ export default function ProfileDashboard() {
   const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
   const [activeTab, setActiveTab] = useState("family");
+
+  const addFamilyMember = (e) => {
+    e.preventDefault();
+    if (member.trim()) {
+      setFamily([...family, member.trim()]);
+      setMember("");
+      setNotice("Family member added.");
+      setTimeout(() => setNotice(""), 2000);
+    }
+  };
+
+  const removeFamily = (index) => {
+    setFamily(family.filter((_, i) => i !== index));
+  };
 
   const handleProfileSave = (e) => {
     e.preventDefault();
@@ -101,8 +116,22 @@ export default function ProfileDashboard() {
 
       {/* Tab 2: Personal Details & Settings */}
       {activeTab === "personal" && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <p className="font-bold text-slate-800 text-sm">Looking for the dedicated Personal Details & Emergency ID page?</p>
+              <p className="text-xs text-slate-500">Access full emergency SOS cards, addresses, blood group data, and family credentials.</p>
+            </div>
+            <Link
+              to="/personal-details"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-sm shrink-0 self-start sm:self-auto"
+            >
+              <span>Go to Dedicated Personal Details</span>
+              <FaExternalLinkAlt className="text-[10px]" />
+            </Link>
+          </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
         {/* Personal Info Form */}
         <form onSubmit={handleProfileSave} className="space-y-4 rounded-3xl bg-white p-6 md:p-8 shadow-sm border border-slate-100">
           <h2 className="text-xl font-extrabold text-slate-800 flex items-center gap-2 mb-2">
@@ -271,6 +300,7 @@ export default function ProfileDashboard() {
           </section>
         </div>
       </div>
+    </div>
       )}
     </div>
   );

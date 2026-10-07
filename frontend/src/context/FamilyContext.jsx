@@ -24,32 +24,39 @@ export function FamilyProvider({ children }) {
   const activeProfStorageKey = `unicare_active_profile_${userId}`;
   const logsStorageKey = `unicare_family_logs_${userId}`;
 
-  // Family Vault Settings - clean and personalized for user
+  // Family Vault Settings - DEFAULT FAMILY NAME IS EMPTY by user request!
   const [familyVault, setFamilyVault] = useState(() => {
     const saved = localStorage.getItem(vaultStorageKey);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Clear any old legacy mock family name
+        if (
+          parsed.householdName === "Sharma Family Vault" ||
+          parsed.householdName === "Chandrika Sharma's Family Vault"
+        ) {
+          parsed.householdName = "";
+        }
+        return parsed;
       } catch (e) {
         console.error(e);
       }
     }
     return {
-      householdName: user?.name ? `${user.name}'s Family Vault` : "My Family Vault",
+      householdName: "", // Kept empty by default!
       inviteCode: `FAM-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`,
       adminEmail: user?.email || "",
       createdDate: new Date().toISOString().split("T")[0],
     };
   });
 
-  // Family Member Profiles - Start FRESH with only the primary user, NO fake family members!
+  // Family Member Profiles - Start FRESH with only the primary user, NO fake family members
   const [profiles, setProfiles] = useState(() => {
     const saved = localStorage.getItem(profilesStorageKey);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // If saved profiles contain old legacy fake demo members for non-demo users, strip them!
           const filtered = parsed.filter(
             (p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma"
           );
@@ -75,7 +82,6 @@ export function FamilyProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          // Filter out legacy hardcoded logs about Rohan or Bruno
           return parsed.filter(
             (l) => !l.action?.includes("Bruno") && !l.user?.includes("Rohan")
           );
@@ -87,13 +93,36 @@ export function FamilyProvider({ children }) {
     return [];
   });
 
-  // Re-sync profiles when user changes or logs into a different account
+  // Re-sync when user changes or logs into a different account
   useEffect(() => {
     if (user) {
-      const saved = localStorage.getItem(profilesStorageKey);
-      if (saved) {
+      const savedVault = localStorage.getItem(vaultStorageKey);
+      if (savedVault) {
         try {
-          const parsed = JSON.parse(saved);
+          const parsed = JSON.parse(savedVault);
+          if (
+            parsed.householdName === "Sharma Family Vault" ||
+            parsed.householdName === "Chandrika Sharma's Family Vault"
+          ) {
+            parsed.householdName = "";
+          }
+          setFamilyVault(parsed);
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        setFamilyVault({
+          householdName: "",
+          inviteCode: `FAM-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`,
+          adminEmail: user.email || "",
+          createdDate: new Date().toISOString().split("T")[0],
+        });
+      }
+
+      const savedProfiles = localStorage.getItem(profilesStorageKey);
+      if (savedProfiles) {
+        try {
+          const parsed = JSON.parse(savedProfiles);
           if (Array.isArray(parsed) && parsed.length > 0) {
             const filtered = parsed.filter(
               (p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma"
@@ -112,7 +141,7 @@ export function FamilyProvider({ children }) {
       setProfiles(fresh);
       setActiveProfileId(fresh[0].id);
     }
-  }, [user, profilesStorageKey]);
+  }, [user, profilesStorageKey, vaultStorageKey]);
 
   // Persist State to LocalStorage
   useEffect(() => {
@@ -140,6 +169,18 @@ export function FamilyProvider({ children }) {
         ", Today",
     };
     setAuditLogs((prev) => [newLog, ...prev.slice(0, 19)]);
+  };
+
+  // Option to change family name
+  const updateHouseholdName = (newName) => {
+    const trimmed = typeof newName === "string" ? newName.trim() : "";
+    setFamilyVault((prev) => {
+      const updated = { ...prev, householdName: trimmed };
+      if (user) localStorage.setItem(vaultStorageKey, JSON.stringify(updated));
+      return updated;
+    });
+    logActivity(`Changed family name to "${trimmed || "Not Set"}"`);
+    return trimmed;
   };
 
   const addFamilyMemberProfile = (data) => {
@@ -230,6 +271,7 @@ export function FamilyProvider({ children }) {
     <FamilyContext.Provider
       value={{
         familyVault,
+        updateHouseholdName,
         profiles,
         activeProfile,
         auditLogs,
