@@ -1,5 +1,4 @@
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { AppointmentProvider } from "./context/AppointmentContext";
 import { HealthRecordProvider } from "./context/HealthRecordContext";
@@ -9,10 +8,11 @@ import { AIProvider } from "./context/AIContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { FamilyProvider } from "./context/FamilyContext";
 import AppRoutes from "./routes/AppRoutes";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 function App() {
   return (
-    <ThemeProvider>
+    <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
           <FamilyProvider>
@@ -32,7 +32,7 @@ function App() {
           </FamilyProvider>
         </AuthProvider>
       </BrowserRouter>
-    </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

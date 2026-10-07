@@ -24,7 +24,7 @@ export default function FamilyProfileSwitcher({ onOpenAddMember }) {
 
   const handleSelectProfile = (p) => {
     setDropdownOpen(false);
-    if (p.id === activeProfile.id) return;
+    if (activeProfile && p.id === activeProfile.id) return;
 
     if (p.pinEnabled && p.pin) {
       setPinModalTarget(p);
@@ -58,16 +58,16 @@ export default function FamilyProfileSwitcher({ onOpenAddMember }) {
         title="Switch Family Profile"
       >
         <div className="w-6 h-6 rounded-md bg-blue-600 text-white flex items-center justify-center font-bold text-[11px]">
-          {activeProfile.name.charAt(0)}
+          {activeProfile?.name?.charAt(0) || "U"}
         </div>
 
         <div className="text-left hidden md:block">
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-slate-800 max-w-[90px] truncate">
-              {activeProfile.name}
+              {activeProfile?.name || "Profile"}
             </span>
             <span className="text-[10px] font-semibold text-slate-400">
-              ({activeProfile.relationship})
+              ({activeProfile?.relationship || "Primary"})
             </span>
           </div>
         </div>
@@ -83,12 +83,12 @@ export default function FamilyProfileSwitcher({ onOpenAddMember }) {
               <FiUsers className="text-blue-600 text-xs" />
               <span className="text-xs font-bold text-slate-900">Family Members</span>
             </div>
-            <span className="text-[10px] text-slate-400 font-medium">{profiles.length} Profiles</span>
+            <span className="text-[10px] text-slate-400 font-medium">{(profiles || []).length} Profiles</span>
           </div>
 
           <div className="space-y-1 max-h-56 overflow-y-auto">
-            {profiles.map((p) => {
-              const isActive = p.id === activeProfile.id;
+            {(profiles || []).map((p) => {
+              const isActive = activeProfile ? p.id === activeProfile.id : false;
               return (
                 <button
                   key={p.id}

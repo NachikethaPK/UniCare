@@ -4,7 +4,6 @@ import { FiSearch, FiBell, FiMenu, FiUser, FiLogOut, FiChevronDown } from "react
 import { useAuth } from "../../context/AuthContext";
 import { useProfile } from "../../context/ProfileContext";
 import FamilyProfileSwitcher from "../common/FamilyProfileSwitcher";
-import ThemeToggle from "../common/ThemeToggle";
 
 function Topbar({ onToggleMobile = () => {}, pageTitle = "Dashboard" }) {
   const { user, logout } = useAuth();
@@ -63,9 +62,6 @@ function Topbar({ onToggleMobile = () => {}, pageTitle = "Dashboard" }) {
             className="pl-9 pr-4 py-1.5 w-48 xl:w-60 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition"
           />
         </form>
-
-        {/* Theme Toggle Switch */}
-        <ThemeToggle />
 
         {/* Family Switcher */}
         <FamilyProfileSwitcher onOpenAddMember={() => navigate("/profile")} />

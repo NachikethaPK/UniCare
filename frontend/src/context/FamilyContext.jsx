@@ -3,47 +3,17 @@ import { useAuth } from "./AuthContext";
 
 const FamilyContext = createContext();
 
-const defaultInitialProfiles = [
-  {
-    id: "prof-self",
-    name: "Chandrika Sharma",
-    relationship: "Self (Primary)",
-    age: "29",
-    bloodGroup: "O+",
-    role: "Family Admin",
-    pinEnabled: false,
-    pin: "",
-    avatarColor: "bg-blue-600",
-  },
-  {
-    id: "prof-spouse",
-    name: "Rohan Sharma",
-    relationship: "Spouse",
-    age: "32",
-    bloodGroup: "A+",
-    role: "Family Member",
-    pinEnabled: true,
-    pin: "1234",
-    avatarColor: "bg-purple-600",
-  },
-  {
-    id: "prof-child",
-    name: "Aarav Sharma",
-    relationship: "Son",
-    age: "6",
-    bloodGroup: "O+",
-    role: "Family Member",
-    pinEnabled: false,
-    pin: "",
-    avatarColor: "bg-emerald-600",
-  },
-];
-
-const defaultAuditLogs = [
-  { id: 1, user: "Rohan Sharma", action: "Booked Vet Consultation for Bruno", timestamp: "Today, 02:30 PM" },
-  { id: 2, user: "Chandrika Sharma", action: "Updated Appointment Reminder with Dr. Ananya Rao", timestamp: "Yesterday, 11:15 AM" },
-  { id: 3, user: "Chandrika Sharma", action: "Generated Family Vault Invite Code", timestamp: "Aug 04, 2026" },
-];
+const createFreshPrimaryProfile = (currentUser) => ({
+  id: currentUser?.id ? `prof-${currentUser.id}` : "prof-self",
+  name: currentUser?.name || "Primary Profile",
+  relationship: "Self (Primary)",
+  age: "",
+  bloodGroup: "",
+  role: "Family Admin",
+  pinEnabled: false,
+  pin: "",
+  avatarColor: "bg-blue-600",
+});
 
 export function FamilyProvider({ children }) {
   const { user } = useAuth();
@@ -54,45 +24,97 @@ export function FamilyProvider({ children }) {
   const activeProfStorageKey = `unicare_active_profile_${userId}`;
   const logsStorageKey = `unicare_family_logs_${userId}`;
 
-  // Family Vault Settings
+  // Family Vault Settings - clean and personalized for user
   const [familyVault, setFamilyVault] = useState(() => {
     const saved = localStorage.getItem(vaultStorageKey);
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
     }
     return {
-      householdName: "Sharma Family Vault",
-      inviteCode: "FAM-UNICARE-8921",
-      adminEmail: user?.email || "chandrika@example.com",
-      createdDate: "2026-08-01",
+      householdName: user?.name ? `${user.name}'s Family Vault` : "My Family Vault",
+      inviteCode: `FAM-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`,
+      adminEmail: user?.email || "",
+      createdDate: new Date().toISOString().split("T")[0],
     };
   });
 
-  // Family Member Profiles
+  // Family Member Profiles - Start FRESH with only the primary user, NO fake family members!
   const [profiles, setProfiles] = useState(() => {
     const saved = localStorage.getItem(profilesStorageKey);
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // If saved profiles contain old legacy fake demo members for non-demo users, strip them!
+          const filtered = parsed.filter(
+            (p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma"
+          );
+          if (filtered.length > 0) return filtered;
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
-    return defaultInitialProfiles;
+    return [createFreshPrimaryProfile(user)];
   });
 
-  // Currently Active Profile
+  // Currently Active Profile ID
   const [activeProfileId, setActiveProfileId] = useState(() => {
     const saved = localStorage.getItem(activeProfStorageKey);
-    return saved || "prof-self";
+    return saved || (profiles[0]?.id || "prof-self");
   });
 
-  // Family Audit Logs
+  // Family Audit Logs - clean and empty for fresh profiles
   const [auditLogs, setAuditLogs] = useState(() => {
     const saved = localStorage.getItem(logsStorageKey);
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Filter out legacy hardcoded logs about Rohan or Bruno
+          return parsed.filter(
+            (l) => !l.action?.includes("Bruno") && !l.user?.includes("Rohan")
+          );
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
-    return defaultAuditLogs;
+    return [];
   });
 
-  // Persist State
+  // Re-sync profiles when user changes or logs into a different account
+  useEffect(() => {
+    if (user) {
+      const saved = localStorage.getItem(profilesStorageKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const filtered = parsed.filter(
+              (p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma"
+            );
+            if (filtered.length > 0) {
+              setProfiles(filtered);
+              setActiveProfileId(filtered[0].id);
+              return;
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      const fresh = [createFreshPrimaryProfile(user)];
+      setProfiles(fresh);
+      setActiveProfileId(fresh[0].id);
+    }
+  }, [user, profilesStorageKey]);
+
+  // Persist State to LocalStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem(vaultStorageKey, JSON.stringify(familyVault));
@@ -102,20 +124,33 @@ export function FamilyProvider({ children }) {
     }
   }, [familyVault, profiles, activeProfileId, auditLogs, vaultStorageKey, profilesStorageKey, activeProfStorageKey, logsStorageKey, user]);
 
-  const activeProfile = profiles.find((p) => p.id === activeProfileId) || profiles[0] || defaultInitialProfiles[0];
+  // Always guaranteed safe activeProfile object
+  const activeProfile =
+    profiles.find((p) => p.id === activeProfileId) ||
+    profiles[0] ||
+    createFreshPrimaryProfile(user);
 
   const logActivity = (action) => {
     const newLog = {
       id: Date.now(),
-      user: activeProfile.name,
+      user: activeProfile?.name || "User",
       action,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ", Today",
+      timestamp:
+        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+        ", Today",
     };
     setAuditLogs((prev) => [newLog, ...prev.slice(0, 19)]);
   };
 
   const addFamilyMemberProfile = (data) => {
-    const colors = ["bg-blue-600", "bg-purple-600", "bg-emerald-600", "bg-amber-600", "bg-teal-600", "bg-rose-600"];
+    const colors = [
+      "bg-blue-600",
+      "bg-purple-600",
+      "bg-emerald-600",
+      "bg-amber-600",
+      "bg-teal-600",
+      "bg-rose-600",
+    ];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
     const newProfile = {
@@ -166,10 +201,14 @@ export function FamilyProvider({ children }) {
     setProfiles((prev) =>
       prev.map((p) =>
         p.id === profileId
-          ? { 
-              ...p, 
-              ...updatedData, 
-              pinEnabled: updatedData.pin ? true : (updatedData.pin === "" ? false : p.pinEnabled) 
+          ? {
+              ...p,
+              ...updatedData,
+              pinEnabled: updatedData.pin
+                ? true
+                : updatedData.pin === ""
+                ? false
+                : p.pinEnabled,
             }
           : p
       )
@@ -182,9 +221,9 @@ export function FamilyProvider({ children }) {
     const target = profiles.find((p) => p.id === profileId);
     setProfiles((prev) => prev.filter((p) => p.id !== profileId));
     if (activeProfileId === profileId) {
-      setActiveProfileId(profiles[0].id);
+      setActiveProfileId(profiles[0]?.id || "prof-self");
     }
-    logActivity(`Removed family member profile: ${target?.name}`);
+    logActivity(`Removed family member profile: ${target?.name || "member"}`);
   };
 
   return (

@@ -386,7 +386,7 @@ export function BloodDonationProvider({ children }) {
     return hospitals.map((hosp) => {
       const hospRequests = requests.filter(
         (r) =>
-          (r.hospitalId === hosp.id || r.hospitalName.toLowerCase() === hosp.name.toLowerCase()) &&
+          (r.hospitalId === hosp.id || (r.hospitalName && hosp.name && r.hospitalName.toLowerCase() === hosp.name.toLowerCase())) &&
           r.status !== "Completed" &&
           r.status !== "Cancelled"
       );
