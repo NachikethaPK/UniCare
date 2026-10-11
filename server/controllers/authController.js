@@ -1,13 +1,29 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { validateEmailLegitimacy } from "../utils/emailValidator.js";
 
 const token = (id, role = "patient") =>
   jwt.sign({ id, role }, process.env.JWT_SECRET || "default_secret", { expiresIn: "7d" });
 
+export const validateEmail = async (req, res) => {
+  const { email } = req.body;
+  const result = await validateEmailLegitimacy(email);
+  res.json(result);
+};
+
 export const register = async (req, res) => {
   const { name, email, password, role = "patient", hospitalDetails } = req.body;
   const cleanEmail = email?.trim().toLowerCase();
+
+  // Validate email legitimacy (syntax, disposable filter, and DNS MX record)
+  const emailValidation = await validateEmailLegitimacy(cleanEmail);
+  if (!emailValidation.valid) {
+    return res.status(400).json({
+      message: emailValidation.reason,
+      details: emailValidation.details,
+    });
+  }
 
   if (await User.findOne({ email: cleanEmail })) {
     return res.status(409).json({ message: "Email already registered" });

@@ -13,8 +13,11 @@ import {
   FiPhone,
   FiShield,
   FiNavigation,
+  FiCheckCircle,
+  FiLoader,
 } from "react-icons/fi";
 import ThemeToggle from "../../components/common/ThemeToggle";
+import { quickValidateEmail, verifyEmailLegitimacy } from "../../utils/emailValidator";
 
 function Signup() {
   const [searchParams] = useSearchParams();
@@ -38,6 +41,7 @@ function Signup() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState({ checking: false, valid: null, message: "" });
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -46,6 +50,38 @@ function Signup() {
       setRoleTab("hospital");
     }
   }, [searchParams]);
+
+  const validateCurrentEmail = async (val) => {
+    const targetEmail = (val !== undefined ? val : email).trim();
+    if (!targetEmail) {
+      setEmailStatus({ checking: false, valid: null, message: "" });
+      return null;
+    }
+
+    const quick = quickValidateEmail(targetEmail);
+    if (!quick.valid) {
+      setEmailStatus({ checking: false, valid: false, message: quick.reason });
+      return quick;
+    }
+
+    setEmailStatus({ checking: true, valid: null, message: "Verifying email domain & MX records..." });
+    const result = await verifyEmailLegitimacy(targetEmail);
+
+    if (result.valid) {
+      setEmailStatus({
+        checking: false,
+        valid: true,
+        message: result.isDemo ? "Demo domain verified." : "Email domain verified with active mail servers.",
+      });
+    } else {
+      setEmailStatus({
+        checking: false,
+        valid: false,
+        message: result.reason || "Invalid email or unverified mail server.",
+      });
+    }
+    return result;
+  };
 
   const detectLocation = () => {
     if (navigator.geolocation) {
@@ -68,6 +104,14 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    // Validate email before submitting
+    const emailValidation = await validateCurrentEmail();
+    if (emailValidation && !emailValidation.valid) {
+      setError(emailValidation.reason || "Please provide a valid, deliverable email address.");
+      return;
+    }
+
     setLoading(true);
 
     let result;
@@ -199,11 +243,39 @@ function Signup() {
                     type="email"
                     placeholder="name@example.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailStatus.valid !== null) setEmailStatus({ checking: false, valid: null, message: "" });
+                    }}
+                    onBlur={() => validateCurrentEmail()}
+                    className={`w-full border text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-10 py-2.5 text-xs sm:text-sm focus:outline-none transition ${
+                      emailStatus.valid === true
+                        ? "border-emerald-500 focus:border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20"
+                        : emailStatus.valid === false
+                        ? "border-rose-500 focus:border-rose-500 bg-rose-50/20 dark:bg-rose-950/20"
+                        : "border-slate-200 dark:border-slate-700 focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800"
+                    }`}
                     required
                   />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {emailStatus.checking && <FiLoader className="w-4 h-4 text-blue-500 animate-spin" />}
+                    {emailStatus.valid === true && <FiCheckCircle className="w-4 h-4 text-emerald-500" />}
+                    {emailStatus.valid === false && <FiAlertCircle className="w-4 h-4 text-rose-500" />}
+                  </div>
                 </div>
+                {emailStatus.message && (
+                  <p
+                    className={`mt-1.5 text-[11px] flex items-center gap-1.5 ${
+                      emailStatus.valid === true
+                        ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                        : emailStatus.valid === false
+                        ? "text-rose-600 dark:text-rose-400 font-medium"
+                        : "text-blue-600 dark:text-blue-400"
+                    }`}
+                  >
+                    <span>{emailStatus.message}</span>
+                  </p>
+                )}
               </div>
 
               <div>
@@ -254,11 +326,39 @@ function Signup() {
                       type="email"
                       placeholder="blooddesk@hospital.org"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (emailStatus.valid !== null) setEmailStatus({ checking: false, valid: null, message: "" });
+                      }}
+                      onBlur={() => validateCurrentEmail()}
+                      className={`w-full border text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-10 py-2.5 text-xs sm:text-sm focus:outline-none transition ${
+                        emailStatus.valid === true
+                          ? "border-emerald-500 focus:border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20"
+                          : emailStatus.valid === false
+                          ? "border-rose-500 focus:border-rose-500 bg-rose-50/20 dark:bg-rose-950/20"
+                          : "border-slate-200 dark:border-slate-700 focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800"
+                      }`}
                       required
                     />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {emailStatus.checking && <FiLoader className="w-4 h-4 text-blue-500 animate-spin" />}
+                      {emailStatus.valid === true && <FiCheckCircle className="w-4 h-4 text-emerald-500" />}
+                      {emailStatus.valid === false && <FiAlertCircle className="w-4 h-4 text-rose-500" />}
+                    </div>
                   </div>
+                  {emailStatus.message && (
+                    <p
+                      className={`mt-1.5 text-[11px] flex items-center gap-1.5 ${
+                        emailStatus.valid === true
+                          ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                          : emailStatus.valid === false
+                          ? "text-rose-600 dark:text-rose-400 font-medium"
+                          : "text-blue-600 dark:text-blue-400"
+                      }`}
+                    >
+                      <span>{emailStatus.message}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>

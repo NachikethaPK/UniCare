@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../services/api";
+import { verifyEmailLegitimacy } from "../utils/emailValidator";
 
 const AuthContext = createContext();
 
@@ -169,6 +170,15 @@ export function AuthProvider({ children }) {
       };
     }
 
+    // Validate email legitimacy (syntax, disposable domains, and DNS MX records)
+    const validation = await verifyEmailLegitimacy(cleanEmail);
+    if (!validation.valid) {
+      return {
+        success: false,
+        message: validation.reason || "Invalid email address or unverified mail server.",
+      };
+    }
+
     try {
       const payload = {
         name,
@@ -196,6 +206,13 @@ export function AuthProvider({ children }) {
       setUser(resUser);
       return { success: true, user: resUser };
     } catch (error) {
+      // If server explicitly returned a validation or business logic error, don't fallback to dummy user
+      if (error.response?.data?.message) {
+        return {
+          success: false,
+          message: error.response.data.message,
+        };
+      }
       const newUserId = (role === "hospital" ? "hosp-" : "user-") + Date.now();
       const newUser = {
         id: newUserId,
