@@ -6,7 +6,7 @@ function DashboardLayout({ children, title = "Dashboard" }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-slate-800">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans text-slate-800 dark:text-slate-100 transition-colors">
       {/* Sidebar (Desktop + Mobile Drawer) */}
       <Sidebar
         mobileOpen={mobileOpen}

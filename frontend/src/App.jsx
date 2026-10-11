@@ -7,13 +7,15 @@ import { PetProvider } from "./context/PetContext";
 import { AIProvider } from "./context/AIContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { FamilyProvider } from "./context/FamilyContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import AppRoutes from "./routes/AppRoutes";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 
 function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
         <AuthProvider>
           <FamilyProvider>
             <AppointmentProvider>
@@ -32,8 +34,9 @@ function App() {
           </FamilyProvider>
         </AuthProvider>
       </BrowserRouter>
-    </ErrorBoundary>
-  );
+    </ThemeProvider>
+  </ErrorBoundary>
+);
 }
 
 export default App;

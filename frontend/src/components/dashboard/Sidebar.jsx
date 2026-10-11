@@ -13,6 +13,7 @@ import {
   FiX,
   FiActivity,
 } from "react-icons/fi";
+import ThemeToggle from "../common/ThemeToggle";
 
 function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   const location = useLocation();
@@ -129,15 +130,16 @@ function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
           })}
         </nav>
 
-        {/* User Footer / Logout */}
-        <div className="p-3 border-t border-slate-800">
+        {/* User Footer / Logout & Theme */}
+        <div className="p-3 border-t border-slate-800 flex items-center justify-between gap-2">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors"
+            className="flex-1 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors"
           >
             <FiLogOut className="w-4 h-4" />
             <span>Sign out</span>
           </button>
+          <ThemeToggle />
         </div>
       </aside>
     </>

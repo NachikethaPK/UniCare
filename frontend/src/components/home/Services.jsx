@@ -3,7 +3,7 @@ import { FiActivity, FiHeart, FiAlertCircle, FiCheck } from "react-icons/fi";
 function Services() {
   const services = [
     {
-      icon: <FiActivity className="w-6 h-6 text-blue-600" />,
+      icon: <FiActivity className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
       title: "Human Healthcare",
       subtitle: "Outpatient & Telehealth Ecosystem",
       points: [
@@ -14,7 +14,7 @@ function Services() {
       ],
     },
     {
-      icon: <FiHeart className="w-6 h-6 text-emerald-600" />,
+      icon: <FiHeart className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
       title: "Pet Healthcare",
       subtitle: "Veterinary Medicine & Wellness",
       points: [
@@ -25,7 +25,7 @@ function Services() {
       ],
     },
     {
-      icon: <FiAlertCircle className="w-6 h-6 text-rose-600" />,
+      icon: <FiAlertCircle className="w-6 h-6 text-rose-600 dark:text-rose-400" />,
       title: "Emergency Services",
       subtitle: "Urgent Care & Rapid Dispatch",
       points: [
@@ -38,18 +38,18 @@ function Services() {
   ];
 
   return (
-    <section id="services" className="py-20 md:py-28 bg-slate-50 border-b border-slate-200/60">
+    <section id="services" className="py-20 md:py-28 bg-slate-50 dark:bg-slate-950 border-b border-slate-200/60 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}
         <div className="max-w-2xl mb-16 text-left">
-          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 mb-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">
             Integrated Solutions
           </p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Comprehensive care paths, unified in one platform.
           </h2>
-          <p className="mt-3 text-slate-600 text-base leading-relaxed">
+          <p className="mt-3 text-slate-600 dark:text-slate-300 text-base leading-relaxed">
             Eliminating fragmented patient portals with an interconnected standard for clinical and veterinary excellence.
           </p>
         </div>
@@ -59,28 +59,28 @@ function Services() {
           {services.map((service, index) => (
             <div
               key={index}
-              className="bg-white border border-slate-200/90 rounded-2xl p-8 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between"
+              className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-8 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center mb-6">
+                <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mb-6">
                   {service.icon}
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                   {service.title}
                 </h3>
 
-                <p className="text-xs font-medium text-slate-500 mt-1 mb-6">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 mb-6">
                   {service.subtitle}
                 </p>
 
-                <div className="h-px bg-slate-100 mb-6" />
+                <div className="h-px bg-slate-100 dark:bg-slate-800 mb-6" />
 
-                <ul className="space-y-3.5 text-sm text-slate-600">
+                <ul className="space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
                   {service.points.map((point, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <div className="w-4 h-4 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center mt-0.5 shrink-0">
-                        <FiCheck className="w-2.5 h-2.5 text-blue-600 stroke-[3]" />
+                      <div className="w-4 h-4 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900/50 flex items-center justify-center mt-0.5 shrink-0">
+                        <FiCheck className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400 stroke-[3]" />
                       </div>
                       <span className="leading-snug">{point}</span>
                     </li>
@@ -88,9 +88,9 @@ function Services() {
                 </ul>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+              <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 font-medium">
                 <span>Enterprise SLA</span>
-                <span className="text-emerald-600 font-semibold">Active</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Active</span>
               </div>
             </div>
           ))}

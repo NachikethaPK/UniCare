@@ -30,42 +30,42 @@ const categoryConfig = {
   "Scan Reports": {
     label: "Scan Reports / Imaging",
     icon: FaXRay,
-    bg: "bg-purple-50",
-    text: "text-purple-700",
-    border: "border-purple-200",
-    badge: "bg-purple-50 text-purple-700 border-purple-200",
+    bg: "bg-purple-50 dark:bg-purple-950/60",
+    text: "text-purple-700 dark:text-purple-300",
+    border: "border-purple-200 dark:border-purple-900/50",
+    badge: "bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900/50",
   },
   "Prescriptions": {
     label: "Prescriptions",
     icon: FaPrescriptionBottleAlt,
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    border: "border-blue-200",
-    badge: "bg-blue-50 text-blue-700 border-blue-200",
+    bg: "bg-blue-50 dark:bg-blue-950/60",
+    text: "text-blue-700 dark:text-blue-300",
+    border: "border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900/50",
   },
   "Vaccination History": {
     label: "Vaccination History",
     icon: FaSyringe,
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    border: "border-emerald-200",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    bg: "bg-emerald-50 dark:bg-emerald-950/60",
+    text: "text-emerald-700 dark:text-emerald-300",
+    border: "border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/50",
   },
   "Lab Reports": {
     label: "Lab Reports",
     icon: FaVial,
-    bg: "bg-amber-50",
-    text: "text-amber-800",
-    border: "border-amber-200",
-    badge: "bg-amber-50 text-amber-800 border-amber-200",
+    bg: "bg-amber-50 dark:bg-amber-950/60",
+    text: "text-amber-800 dark:text-amber-300",
+    border: "border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-900/50",
   },
   "Medical Documents": {
     label: "Medical Documents",
     icon: FaNotesMedical,
-    bg: "bg-slate-50",
-    text: "text-slate-700",
-    border: "border-slate-200",
-    badge: "bg-slate-100 text-slate-700 border-slate-200",
+    bg: "bg-slate-50 dark:bg-slate-800",
+    text: "text-slate-700 dark:text-slate-300",
+    border: "border-slate-200 dark:border-slate-700",
+    badge: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
   },
 };
 
@@ -282,49 +282,49 @@ export default function HealthRecordsDashboard() {
 
       {/* Summary Cards */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-        <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 flex items-center gap-3.5">
-          <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl">
+        <div className="rounded-2xl bg-white dark:bg-slate-900 p-5 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="p-3 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 rounded-2xl">
             <FaXRay className="text-xl" />
           </div>
           <div>
-            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Imaging / Scans</p>
-            <p className="text-2xl font-black text-slate-800">
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Imaging / Scans</p>
+            <p className="text-2xl font-black text-slate-800 dark:text-white">
               {records.filter((r) => r.category === "Scan Reports" || (r.tags && r.tags.includes("Imaging"))).length}
             </p>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 flex items-center gap-3.5">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+        <div className="rounded-2xl bg-white dark:bg-slate-900 p-5 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="p-3 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 rounded-2xl">
             <FaPrescriptionBottleAlt className="text-xl" />
           </div>
           <div>
-            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Prescriptions</p>
-            <p className="text-2xl font-black text-blue-600">
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Prescriptions</p>
+            <p className="text-2xl font-black text-blue-600 dark:text-blue-400">
               {records.filter((r) => r.category === "Prescriptions").length}
             </p>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 flex items-center gap-3.5">
-          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+        <div className="rounded-2xl bg-white dark:bg-slate-900 p-5 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-2xl">
             <FaSyringe className="text-xl" />
           </div>
           <div>
-            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Vaccinations</p>
-            <p className="text-2xl font-black text-emerald-600">
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Vaccinations</p>
+            <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
               {records.filter((r) => r.category === "Vaccination History").length}
             </p>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 flex items-center gap-3.5">
-          <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+        <div className="rounded-2xl bg-white dark:bg-slate-900 p-5 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
+          <div className="p-3 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-2xl">
             <FaVial className="text-xl" />
           </div>
           <div>
-            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Lab Reports</p>
-            <p className="text-2xl font-black text-amber-600">
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Lab Reports</p>
+            <p className="text-2xl font-black text-amber-600 dark:text-amber-400">
               {records.filter((r) => r.category === "Lab Reports").length}
             </p>
           </div>
@@ -332,12 +332,12 @@ export default function HealthRecordsDashboard() {
       </div>
 
       {/* Search, Filter & Chronological Sorting Bar */}
-      <div className="bg-white p-4 md:p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4">
+      <div className="bg-white dark:bg-slate-900 p-4 md:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 space-y-4">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm" />
             <input
-              className="w-full pl-11 pr-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+              className="w-full pl-11 pr-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 transition"
               placeholder="Search health records by title, doctor, or test name..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -346,7 +346,7 @@ export default function HealthRecordsDashboard() {
 
           <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
             <select
-              className="px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+              className="px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
               value={selectedCategory}
               onChange={(e) => {
                 setSelectedCategory(e.target.value);
@@ -364,17 +364,17 @@ export default function HealthRecordsDashboard() {
             {/* Chronological Sort Toggle Button */}
             <button
               onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
-              className="px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs flex items-center gap-2 transition shrink-0"
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center gap-2 transition shrink-0 cursor-pointer"
               title="Toggle Chronological Sort Order"
             >
               {sortOrder === "desc" ? (
                 <>
-                  <FaSortAmountDown className="text-indigo-600" />
+                  <FaSortAmountDown className="text-indigo-600 dark:text-indigo-400" />
                   <span>Newest Date First</span>
                 </>
               ) : (
                 <>
-                  <FaSortAmountUp className="text-indigo-600" />
+                  <FaSortAmountUp className="text-indigo-600 dark:text-indigo-400" />
                   <span>Oldest Date First</span>
                 </>
               )}
@@ -384,16 +384,16 @@ export default function HealthRecordsDashboard() {
 
         {/* Tag Filters Bar */}
         {allUniqueTags.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-100">
-            <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
-              <FaTags className="text-indigo-500 text-xs" /> Tags:
+          <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <FaTags className="text-indigo-500 dark:text-indigo-400 text-xs" /> Tags:
             </span>
             <button
               onClick={() => setSelectedTag("")}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
                 selectedTag === ""
                   ? "bg-indigo-600 text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               All Tags
@@ -402,10 +402,10 @@ export default function HealthRecordsDashboard() {
               <button
                 key={tag}
                 onClick={() => setSelectedTag(selectedTag === tag ? "" : tag)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1 cursor-pointer ${
                   selectedTag === tag
                     ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                    : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
+                    : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-slate-300"
                 }`}
               >
                 <FaTag className="text-[9px] opacity-70" />
@@ -425,7 +425,7 @@ export default function HealthRecordsDashboard() {
             return (
               <article
                 key={record.id}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-slate-200/80 p-4 hover:border-indigo-400 hover:shadow-md transition bg-white"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition bg-white dark:bg-slate-850 dark:bg-slate-900/60"
               >
                 <div className="flex items-start gap-4">
                   <div className={`p-3.5 rounded-2xl ${conf.bg} ${conf.text} shrink-0`}>
@@ -433,18 +433,18 @@ export default function HealthRecordsDashboard() {
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h2 className="font-bold text-slate-900 text-base">{record.title}</h2>
-                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
+                      <h2 className="font-bold text-slate-900 dark:text-white text-base">{record.title}</h2>
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/60 flex items-center gap-1">
                         <FaCalendarAlt className="text-[9px]" />
                         Report Date: {record.date}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-wrap text-xs text-slate-500">
+                    <div className="flex items-center gap-2 flex-wrap text-xs text-slate-500 dark:text-slate-400">
                       <span className={`px-2 py-0.5 rounded-md font-semibold text-[11px] border ${conf.badge}`}>
                         {record.category}
                       </span>
-                      {record.doctor && <span>· Doctor/Clinic: <strong className="text-slate-700">{record.doctor}</strong></span>}
+                      {record.doctor && <span>· Doctor/Clinic: <strong className="text-slate-700 dark:text-slate-200">{record.doctor}</strong></span>}
                     </div>
 
                     {/* Tag Badges List */}
@@ -453,22 +453,22 @@ export default function HealthRecordsDashboard() {
                         <span
                           key={idx}
                           onClick={() => setSelectedTag(tag)}
-                          className="cursor-pointer text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 transition flex items-center gap-1"
+                          className="cursor-pointer text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-600 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800 transition flex items-center gap-1"
                         >
-                          <FaTag className="text-[8px] text-slate-400" />
+                          <FaTag className="text-[8px] text-slate-400 dark:text-slate-500" />
                           {tag}
                         </span>
                       ))}
                     </div>
 
-                    <p className="text-[11px] text-slate-400 font-mono">{record.fileName}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">{record.fileName}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 self-end sm:self-center">
                   <button
                     onClick={() => setPreviewRecord(record)}
-                    className="rounded-xl bg-slate-100 hover:bg-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-700 transition flex items-center gap-1.5"
+                    className="rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 transition flex items-center gap-1.5 cursor-pointer"
                   >
                     <FaEye />
                     <span>View</span>
@@ -476,7 +476,7 @@ export default function HealthRecordsDashboard() {
 
                   <button
                     onClick={() => handleDownload(record)}
-                    className="rounded-xl bg-indigo-600 hover:bg-indigo-700 px-3.5 py-2 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow-xs"
+                    className="rounded-xl bg-indigo-600 hover:bg-indigo-700 px-3.5 py-2 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                   >
                     <FaDownload />
                     <span>Download</span>
@@ -484,7 +484,7 @@ export default function HealthRecordsDashboard() {
 
                   <button
                     onClick={() => handleDelete(record.id)}
-                    className="rounded-xl bg-red-50 hover:bg-red-100 px-3 py-2 text-xs font-semibold text-red-700 transition"
+                    className="rounded-xl bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 px-3 py-2 text-xs font-semibold text-red-700 dark:text-red-300 transition cursor-pointer"
                     title="Delete Record"
                   >
                     <FaTrash />
@@ -495,8 +495,8 @@ export default function HealthRecordsDashboard() {
           })}
 
           {!filtered.length && (
-            <div className="py-12 text-center text-slate-500 font-medium space-y-2">
-              <FaFileMedical className="text-4xl text-slate-300 mx-auto" />
+            <div className="py-12 text-center text-slate-500 dark:text-slate-400 font-medium space-y-2">
+              <FaFileMedical className="text-4xl text-slate-300 dark:text-slate-600 mx-auto" />
               <p>No medical records found matching your query or tag filter.</p>
             </div>
           )}
@@ -506,15 +506,15 @@ export default function HealthRecordsDashboard() {
       {/* Upload New Report Modal with Hybrid Date & Category OCR Extraction */}
       {showUploadModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 animate-fadeIn">
-          <div className="w-full max-w-lg bg-white rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Upload & Analyze Medical Document</h3>
-                <p className="text-xs text-slate-500">Report date, category & diagnostic tags are auto-detected by OCR AI.</p>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Upload & Analyze Medical Document</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Report date, category & diagnostic tags are auto-detected by OCR AI.</p>
               </div>
               <button
                 onClick={() => setShowUploadModal(false)}
-                className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+                className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition"
               >
                 <FaTimes />
               </button>
@@ -523,50 +523,50 @@ export default function HealthRecordsDashboard() {
             <form onSubmit={save} className="space-y-4 text-xs">
               {/* File Upload Input */}
               <div>
-                <label className="font-bold text-slate-800 block mb-1">Select Medical Document (PDF, Image, Text)</label>
+                <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">Select Medical Document (PDF, Image, Text)</label>
                 <input
                   type="file"
                   onChange={handleFileChange}
                   accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp"
-                  className="w-full rounded-2xl border border-slate-200 p-2.5 bg-slate-50 text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
 
               {/* Date & OCR Extraction Loading Banner */}
               {isExtractingDate && (
-                <div className="p-3.5 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700 flex items-center gap-2.5 text-xs font-semibold animate-pulse">
-                  <FaSpinner className="animate-spin text-indigo-600 text-base shrink-0" />
+                <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 flex items-center gap-2.5 text-xs font-semibold animate-pulse">
+                  <FaSpinner className="animate-spin text-indigo-600 dark:text-indigo-400 text-base shrink-0" />
                   <div>
                     <p>Analyzing document content with Gemini Vision OCR...</p>
-                    <p className="text-[11px] text-indigo-500 font-normal">Extracting clinical examination date, category & medical tags</p>
+                    <p className="text-[11px] text-indigo-500 dark:text-indigo-400 font-normal">Extracting clinical examination date, category & medical tags</p>
                   </div>
                 </div>
               )}
 
               {/* Extraction Success Banner with Extracted Details */}
               {extractedInfo && !isExtractingDate && (
-                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-2">
+                <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-xs space-y-2">
                   <div className="flex items-center gap-1.5 font-bold">
-                    <FaCheckCircle className="text-emerald-600 text-sm" />
+                    <FaCheckCircle className="text-emerald-600 dark:text-emerald-400 text-sm" />
                     <span>Clinical Date Extracted: {extractedInfo.date}</span>
                   </div>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] font-semibold text-emerald-800">Auto Category:</span>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 font-bold text-emerald-800 text-[10px]">
+                    <span className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300">Auto Category:</span>
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 font-bold text-emerald-800 dark:text-emerald-300 text-[10px]">
                       {extractedInfo.category}
                     </span>
                   </div>
                   {extractedInfo.tags && extractedInfo.tags.length > 0 && (
                     <div className="flex items-center gap-1 flex-wrap">
-                      <span className="text-[11px] font-semibold text-emerald-800">Tags:</span>
+                      <span className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300">Tags:</span>
                       {extractedInfo.tags.map((t, i) => (
-                        <span key={i} className="px-1.5 py-0.5 bg-white/80 border border-emerald-300 rounded text-[10px] text-emerald-900 font-medium">
+                        <span key={i} className="px-1.5 py-0.5 bg-white/80 dark:bg-slate-800 border border-emerald-300 dark:border-emerald-700 rounded text-[10px] text-emerald-900 dark:text-emerald-300 font-medium">
                           #{t}
                         </span>
                       ))}
                     </div>
                   )}
-                  <p className="text-[10px] text-emerald-700">
+                  <p className="text-[10px] text-emerald-700 dark:text-emerald-400">
                     Extracted via <strong>{extractedInfo.method}</strong> ({extractedInfo.confidence} confidence).
                   </p>
                 </div>
@@ -574,24 +574,24 @@ export default function HealthRecordsDashboard() {
 
               {/* Title */}
               <div>
-                <label className="font-bold text-slate-800 block mb-1">Document Title</label>
+                <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">Document Title</label>
                 <input
                   required
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder="e.g. Annual Blood Chemistry, Chest X-Ray, or Amoxicillin Rx"
-                  className="w-full rounded-2xl border border-slate-200 p-3 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 p-3 text-xs bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
                 />
               </div>
 
               {/* Category & Date Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-slate-800 block mb-1">Category / Classification</label>
+                  <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">Category / Classification</label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full rounded-2xl border border-slate-200 p-3 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 p-3 text-xs bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
                   >
                     {categories.map((c) => (
                       <option key={c} value={c}>
@@ -602,9 +602,9 @@ export default function HealthRecordsDashboard() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-800 block mb-1 flex items-center justify-between">
+                  <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1 flex items-center justify-between">
                     <span>Clinical Examination Date</span>
-                    <span className="text-[10px] text-indigo-600 font-semibold flex items-center gap-0.5">
+                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold flex items-center gap-0.5">
                       <FaMagic /> Auto-sorted
                     </span>
                   </label>
@@ -613,25 +613,25 @@ export default function HealthRecordsDashboard() {
                     required
                     value={form.date}
                     onChange={(e) => setForm({ ...form, date: e.target.value })}
-                    className="w-full rounded-2xl border border-slate-200 p-3 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 p-3 text-xs bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
                   />
                 </div>
               </div>
 
               {/* Doctor / Clinic */}
               <div>
-                <label className="font-bold text-slate-800 block mb-1">Doctor / Clinic / Hospital Name</label>
+                <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">Doctor / Clinic / Hospital Name</label>
                 <input
                   value={form.doctor}
                   onChange={(e) => setForm({ ...form, doctor: e.target.value })}
                   placeholder="e.g. Dr. Amanda Evans or Apex Diagnostic Center"
-                  className="w-full rounded-2xl border border-slate-200 p-3 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 p-3 text-xs bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
                 />
               </div>
 
               {/* Tags Management */}
               <div>
-                <label className="font-bold text-slate-800 block mb-1">Medical & Diagnostic Tags</label>
+                <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">Medical & Diagnostic Tags</label>
                 <div className="flex gap-2 mb-2">
                   <input
                     value={customTagInput}
@@ -643,12 +643,12 @@ export default function HealthRecordsDashboard() {
                       }
                     }}
                     placeholder="Add custom tag (e.g. MRI, Antibiotics, Booster) and press Enter"
-                    className="flex-1 rounded-2xl border border-slate-200 p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
+                    className="flex-1 rounded-2xl border border-slate-200 dark:border-slate-700 p-2.5 text-xs bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none font-medium"
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs transition"
+                    className="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-2xl text-xs transition cursor-pointer"
                   >
                     Add Tag
                   </button>
@@ -658,37 +658,37 @@ export default function HealthRecordsDashboard() {
                   {form.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-1 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold text-[11px] flex items-center gap-1.5"
+                      className="px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-semibold text-[11px] flex items-center gap-1.5"
                     >
                       <FaTag className="text-[9px]" />
                       <span>{tag}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveTag(tag)}
-                        className="hover:text-red-600 transition"
+                        className="hover:text-red-600 dark:hover:text-red-400 transition cursor-pointer"
                       >
                         <FaTimes className="text-[9px]" />
                       </button>
                     </span>
                   ))}
                   {!form.tags.length && (
-                    <span className="text-[11px] text-slate-400 italic">No tags added yet.</span>
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500 italic">No tags added yet.</span>
                   )}
                 </div>
               </div>
 
               {/* Modal Actions */}
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-700 font-semibold text-xs transition"
+                  className="px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-semibold text-xs transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition active:scale-95"
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition active:scale-95 cursor-pointer"
                 >
                   Save & Organize Chronologically
                 </button>
@@ -701,18 +701,18 @@ export default function HealthRecordsDashboard() {
       {/* View/Preview Modal */}
       {previewRecord && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 animate-fadeIn">
-          <div className="w-full max-w-2xl bg-white rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-100 space-y-4 max-h-[85vh] flex flex-col justify-between">
-            <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+          <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-4 max-h-[85vh] flex flex-col justify-between">
+            <div className="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-xs font-bold uppercase text-indigo-600">{previewRecord.category}</span>
-                <h3 className="text-xl font-extrabold text-slate-800">{previewRecord.title}</h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <span className="text-xs font-bold uppercase text-indigo-600 dark:text-indigo-400">{previewRecord.category}</span>
+                <h3 className="text-xl font-extrabold text-slate-800 dark:text-white">{previewRecord.title}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Clinical Examination Date: <strong>{previewRecord.date}</strong> · Doctor/Clinic: {previewRecord.doctor || "N/A"}
                 </p>
                 {previewRecord.tags && previewRecord.tags.length > 0 && (
                   <div className="flex items-center gap-1.5 flex-wrap mt-2">
                     {previewRecord.tags.map((t, idx) => (
-                      <span key={idx} className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
+                      <span key={idx} className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/50 flex items-center gap-1">
                         <FaTag className="text-[8px]" />
                         {t}
                       </span>
@@ -722,34 +722,34 @@ export default function HealthRecordsDashboard() {
               </div>
               <button
                 onClick={() => setPreviewRecord(null)}
-                className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+                className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
               >
                 <FaTimes className="text-lg" />
               </button>
             </div>
 
             {/* Document Preview Content */}
-            <div className="flex-1 overflow-y-auto bg-slate-50 p-4 rounded-2xl border border-slate-200/80 min-h-[220px] flex flex-col items-center justify-center text-center">
+            <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 min-h-[220px] flex flex-col items-center justify-center text-center">
               {previewRecord.fileUrl && previewRecord.fileUrl.startsWith("data:image") ? (
                 <img src={previewRecord.fileUrl} alt={previewRecord.title} className="max-h-72 object-contain rounded-xl shadow-sm" />
               ) : previewRecord.fileUrl && previewRecord.fileUrl.startsWith("data:text") ? (
-                <pre className="text-xs font-mono text-slate-700 whitespace-pre-wrap text-left w-full">
+                <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 whitespace-pre-wrap text-left w-full">
                   {decodeURIComponent(previewRecord.fileUrl.split(",")[1] || "")}
                 </pre>
               ) : (
                 <div className="space-y-3 py-6">
-                  <FaFileMedical className="text-5xl text-indigo-600 mx-auto" />
-                  <p className="font-bold text-slate-700 text-sm">{previewRecord.fileName}</p>
-                  <p className="text-xs text-slate-500">Document securely archived in UniCare Medical Vault.</p>
+                  <FaFileMedical className="text-5xl text-indigo-600 dark:text-indigo-400 mx-auto" />
+                  <p className="font-bold text-slate-700 dark:text-slate-200 text-sm">{previewRecord.fileName}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Document securely archived in UniCare Medical Vault.</p>
                 </div>
               )}
             </div>
 
-            <div className="flex justify-between items-center border-t border-slate-100 pt-3">
-              <span className="text-[11px] text-slate-400 font-mono">ID: {previewRecord.id}</span>
+            <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-3">
+              <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">ID: {previewRecord.id}</span>
               <button
                 onClick={() => handleDownload(previewRecord)}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer"
               >
                 <FaDownload />
                 <span>Download Document</span>

@@ -14,6 +14,7 @@ import {
   FiShield,
   FiNavigation,
 } from "react-icons/fi";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
 function Signup() {
   const [searchParams] = useSearchParams();
@@ -56,7 +57,7 @@ function Signup() {
           setGpsStatus("GPS Coordinates verified!");
           setTimeout(() => setGpsStatus(""), 3000);
         },
-        (err) => {
+        () => {
           setGpsStatus("Could not detect GPS. Using default city coordinates.");
           setTimeout(() => setGpsStatus(""), 3000);
         }
@@ -98,21 +99,26 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6 py-12">
-      <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 w-full max-w-lg">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-6 py-12 transition-colors relative">
+      {/* Top Controls */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2">
+        <ThemeToggle />
+      </div>
+
+      <div className="bg-white dark:bg-slate-900 p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 w-full max-w-lg transition-colors">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-2.5 text-slate-900 group mb-3">
+          <Link to="/" className="inline-flex items-center gap-2.5 text-slate-900 dark:text-white group mb-3">
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
               <FiActivity className="w-4 h-4 stroke-[2.5]" />
             </div>
-            <span className="font-bold text-lg tracking-tight text-slate-900">UniCare</span>
+            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">UniCare</span>
           </Link>
 
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             {roleTab === "hospital" ? "Register Your Hospital" : "Create your account"}
           </h1>
-          <p className="text-slate-500 text-xs sm:text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">
             {roleTab === "hospital"
               ? "Join the emergency blood network to publish requests and connect with donors"
               : "Join the unified healthcare operating platform"}
@@ -120,7 +126,7 @@ function Signup() {
         </div>
 
         {/* Role Switcher */}
-        <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl mb-6">
+        <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
           <button
             type="button"
             onClick={() => {
@@ -129,11 +135,11 @@ function Signup() {
             }}
             className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition ${
               roleTab === "patient"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-800"
+                ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
-            <FiUser className="w-3.5 h-3.5 text-blue-600" />
+            <FiUser className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>Patient / Donor</span>
           </button>
           <button
@@ -144,19 +150,19 @@ function Signup() {
             }}
             className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition ${
               roleTab === "hospital"
-                ? "bg-white text-rose-700 shadow-sm"
-                : "text-slate-500 hover:text-slate-800"
+                ? "bg-white dark:bg-slate-700 text-rose-700 dark:text-rose-400 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
-            <FiPlusSquare className="w-3.5 h-3.5 text-rose-600" />
+            <FiPlusSquare className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             <span>Hospital Registration</span>
           </button>
         </div>
 
         {/* Error Notification */}
         {error && (
-          <div className="mb-6 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2.5">
-            <FiAlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          <div className="mb-6 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2.5">
+            <FiAlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -167,51 +173,51 @@ function Signup() {
             /* Patient Fields */
             <>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Full Legal Name
                 </label>
                 <div className="relative">
-                  <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="e.g. Jane Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Email Address
                 </label>
                 <div className="relative">
-                  <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                   <input
                     type="email"
                     placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                   <input
                     type="password"
                     placeholder="Create a strong password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
@@ -221,17 +227,17 @@ function Signup() {
             /* Hospital Fields */
             <>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Hospital / Institution Name
                 </label>
                 <div className="relative">
-                  <FiPlusSquare className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <FiPlusSquare className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="e.g. Manipal Super Speciality Hospital"
                     value={hospitalName}
                     onChange={(e) => setHospitalName(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
@@ -239,34 +245,34 @@ function Signup() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Official Email
                   </label>
                   <div className="relative">
-                    <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                     <input
                       type="email"
                       placeholder="blooddesk@hospital.org"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                      className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     NABH / License No.
                   </label>
                   <div className="relative">
-                    <FiShield className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <FiShield className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                     <input
                       type="text"
                       placeholder="e.g. NABH-2024-912"
                       value={licenseNo}
                       onChange={(e) => setLicenseNo(e.target.value)}
-                      className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                      className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                       required
                     />
                   </div>
@@ -274,34 +280,34 @@ function Signup() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                   <input
                     type="password"
                     placeholder="Create hospital portal password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Full Hospital Address & Campus
                 </label>
                 <div className="relative">
-                  <FiMapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <FiMapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="e.g. 154/11, Bannerghatta Main Rd, Bangalore"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
@@ -309,7 +315,7 @@ function Signup() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     City / Region
                   </label>
                   <input
@@ -317,23 +323,23 @@ function Signup() {
                     placeholder="Bangalore"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Blood Desk Helpline
                   </label>
                   <div className="relative">
-                    <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                     <input
                       type="text"
                       placeholder="+91 80 2630 4055"
                       value={emergencyContact}
                       onChange={(e) => setEmergencyContact(e.target.value)}
-                      className="w-full border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 focus:bg-white transition"
+                      className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-rose-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                       required
                     />
                   </div>
@@ -341,39 +347,39 @@ function Signup() {
               </div>
 
               {/* Map Coordinates & GPS detector */}
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                    <FiNavigation className="text-rose-600" /> Google Maps Pin Coordinates
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <FiNavigation className="text-rose-600 dark:text-rose-400" /> Google Maps Pin Coordinates
                   </span>
                   <button
                     type="button"
                     onClick={detectLocation}
-                    className="text-[11px] text-blue-600 hover:text-blue-800 font-semibold"
+                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold"
                   >
                     📍 Detect GPS
                   </button>
                 </div>
-                {gpsStatus && <p className="text-[11px] text-emerald-600 font-semibold">{gpsStatus}</p>}
+                {gpsStatus && <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">{gpsStatus}</p>}
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <label className="text-[10px] text-slate-500">Latitude</label>
+                    <label className="text-[10px] text-slate-500 dark:text-slate-400">Latitude</label>
                     <input
                       type="number"
                       step="any"
                       value={lat}
                       onChange={(e) => setLat(e.target.value)}
-                      className="w-full border border-slate-200 rounded-md p-1.5 bg-white text-xs outline-none"
+                      className="w-full border border-slate-200 dark:border-slate-700 rounded-md p-1.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-500">Longitude</label>
+                    <label className="text-[10px] text-slate-500 dark:text-slate-400">Longitude</label>
                     <input
                       type="number"
                       step="any"
                       value={lng}
                       onChange={(e) => setLng(e.target.value)}
-                      className="w-full border border-slate-200 rounded-md p-1.5 bg-white text-xs outline-none"
+                      className="w-full border border-slate-200 dark:border-slate-700 rounded-md p-1.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs outline-none"
                     />
                   </div>
                 </div>
@@ -386,8 +392,8 @@ function Signup() {
             disabled={loading}
             className={`w-full text-white font-medium py-2.5 rounded-lg transition shadow-xs flex items-center justify-center gap-2 text-xs sm:text-sm mt-6 active:scale-[0.99] ${
               roleTab === "hospital"
-                ? "bg-rose-700 hover:bg-rose-800"
-                : "bg-slate-900 hover:bg-slate-800"
+                ? "bg-rose-700 hover:bg-rose-800 dark:bg-rose-700 dark:hover:bg-rose-600"
+                : "bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
             }`}
           >
             <span>
@@ -402,12 +408,12 @@ function Signup() {
         </form>
 
         {/* Footer */}
-        <div className="mt-6 text-center pt-6 border-t border-slate-100">
-          <p className="text-xs text-slate-500">
+        <div className="mt-6 text-center pt-6 border-t border-slate-100 dark:border-slate-800">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
             <Link
               to={roleTab === "hospital" ? "/login?role=hospital" : "/login"}
-              className="font-semibold text-blue-600 hover:text-blue-700"
+              className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700"
             >
               Sign in
             </Link>
