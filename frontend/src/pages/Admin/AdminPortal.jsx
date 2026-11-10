@@ -224,21 +224,6 @@ export default function AdminPortal() {
     }
   };
 
-  // Quick Developer / Owner Demo Login Helper
-  const handleOneClickOwnerLogin = async () => {
-    setAuthError("");
-    setAuthLoading(true);
-    setAdminEmail("admin@unicare.health");
-    setAdminPassword("adminpassword123");
-    const res = await login("admin@unicare.health", "adminpassword123");
-    setAuthLoading(false);
-    if (res.success) {
-      showToast("Owner Developer Session Authenticated.");
-    } else {
-      setAuthError(res.message);
-    }
-  };
-
   // Maintenance Action: Flush Cache
   const handleFlushCache = () => {
     try {
@@ -366,33 +351,6 @@ export default function AdminPortal() {
                 </button>
               </div>
             )}
-
-            {/* One-Click Owner Login Helper */}
-            <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>⚡ Verified Owner Fast-Access</span>
-                <span className="text-emerald-400 font-mono">ROOT</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleOneClickOwnerLogin}
-                disabled={authLoading}
-                className="w-full py-2.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold transition flex items-center justify-between group active:scale-[0.99]"
-              >
-                <div className="flex items-center gap-2">
-                  <FiShield className="w-4 h-4 text-amber-400" />
-                  <span>Authenticate as Site Owner (admin@unicare.health)</span>
-                </div>
-                <FiArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-
-            <div className="relative flex items-center justify-center">
-              <div className="border-t border-slate-800 w-full" />
-              <span className="bg-slate-900 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 absolute">
-                Or Enter Admin Credentials
-              </span>
-            </div>
 
             {/* Standard Login Form */}
             <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
