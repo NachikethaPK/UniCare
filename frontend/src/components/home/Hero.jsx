@@ -16,7 +16,7 @@ function Hero() {
         {/* Minimalist Platform Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-semibold tracking-wide shadow-xs">
           <UniCareMark className="w-4 h-4" />
-          <span>Unified Clinical Architecture · HIPAA Compliant</span>
+          <span>Unified Clinical Architecture · Privacy-First</span>
         </div>
 
         {/* Headline */}

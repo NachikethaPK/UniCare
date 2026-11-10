@@ -241,7 +241,7 @@ export default function PersonalDetails() {
                 <FiUser className="text-blue-600 w-5 h-5" />
                 <span>Personal & Medical Identity</span>
               </h3>
-              <span className="text-[10px] font-bold uppercase text-slate-400">HIPAA Compliant</span>
+              <span className="text-[10px] font-bold uppercase text-slate-400">Private & Secure</span>
             </div>
 
             {/* Name & Email */}

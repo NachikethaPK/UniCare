@@ -17,7 +17,7 @@ function Footer() {
 
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-medium text-slate-300">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>All Systems Operational · HIPAA Ready</span>
+            <span>All Systems Operational · Encrypted & Secure</span>
           </div>
         </div>
 

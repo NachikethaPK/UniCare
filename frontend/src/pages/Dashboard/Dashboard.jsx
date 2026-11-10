@@ -81,7 +81,7 @@ function Dashboard() {
                 <FiShield className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-bold text-white text-xs">HIPAA & NABH Ready</p>
+                <p className="font-bold text-white text-xs">NABH Verified Network</p>
                 <p className="text-[11px] text-slate-400">256-Bit Encrypted Vault</p>
               </div>
             </div>
