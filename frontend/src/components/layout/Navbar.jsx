@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { FiMenu, FiX, FiActivity, FiArrowRight } from "react-icons/fi";
+import { FiMenu, FiX, FiArrowRight } from "react-icons/fi";
 import ThemeToggle from "../common/ThemeToggle";
+import UniCareLogo from "../common/UniCareLogo";
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -19,15 +20,7 @@ function Navbar() {
     <header className="sticky top-0 z-50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5 text-slate-900 dark:text-white group">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm transition-transform duration-200 group-hover:scale-105">
-            <FiActivity className="w-4 h-4 stroke-[2.5]" />
-          </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">UniCare</span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400">Health</span>
-          </div>
-        </Link>
+        <UniCareLogo size="md" subtitle="Health" />
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-7">

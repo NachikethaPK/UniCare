@@ -11,9 +11,9 @@ import {
   FiUsers,
   FiLogOut,
   FiX,
-  FiActivity,
 } from "react-icons/fi";
 import ThemeToggle from "../common/ThemeToggle";
+import UniCareLogo from "../common/UniCareLogo";
 
 function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   const location = useLocation();
@@ -86,15 +86,7 @@ function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
       >
         {/* Header / Logo */}
         <div className="h-16 px-6 border-b border-slate-800 flex items-center justify-between">
-          <Link to="/" onClick={onCloseMobile} className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
-              <FiActivity className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-bold text-base tracking-tight text-white">UniCare</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Portal</span>
-            </div>
-          </Link>
+          <UniCareLogo size="sm" subtitle="Portal" inverted={true} onClick={onCloseMobile} />
           <button
             onClick={onCloseMobile}
             className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"

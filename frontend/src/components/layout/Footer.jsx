@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { FiActivity, FiMail, FiPhone, FiMapPin } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
+import UniCareLogo from "../common/UniCareLogo";
 
 function Footer() {
   return (
@@ -8,12 +9,7 @@ function Footer() {
         
         {/* Col 1: Brand & Status */}
         <div className="md:col-span-4 space-y-4">
-          <Link to="/" className="flex items-center gap-2.5 text-white">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
-              <FiActivity className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <span className="font-bold text-lg tracking-tight text-white">UniCare</span>
-          </Link>
+          <UniCareLogo size="md" subtitle="Health Systems" inverted={true} />
 
           <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
             The unified healthcare operating system combining human medical records, veterinary profiles, and verified emergency blood matching.

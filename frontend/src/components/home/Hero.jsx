@@ -4,6 +4,7 @@ import {
   FiShield,
   FiCheckCircle,
 } from "react-icons/fi";
+import { UniCareMark } from "../common/UniCareLogo";
 
 function Hero() {
   return (
@@ -13,8 +14,8 @@ function Hero() {
 
       <div className="max-w-5xl mx-auto px-6 relative z-10 text-center space-y-6">
         {/* Minimalist Platform Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-semibold tracking-wide">
-          <FiShield className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-semibold tracking-wide shadow-xs">
+          <UniCareMark className="w-4 h-4" />
           <span>Unified Clinical Architecture · HIPAA Compliant</span>
         </div>
 

@@ -5,13 +5,13 @@ import {
   FiMail,
   FiLock,
   FiAlertCircle,
-  FiActivity,
   FiArrowRight,
   FiUser,
   FiPlusSquare,
   FiShield,
 } from "react-icons/fi";
 import ThemeToggle from "../../components/common/ThemeToggle";
+import UniCareLogo from "../../components/common/UniCareLogo";
 
 function Login() {
   const [roleTab, setRoleTab] = useState("patient"); // "patient" or "hospital"
@@ -72,12 +72,9 @@ function Login() {
       <div className="bg-white dark:bg-slate-900 p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 w-full max-w-md transition-colors">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-2.5 text-slate-900 dark:text-white group mb-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
-              <FiActivity className="w-4 h-4 stroke-[2.5]" />
-            </div>
-            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">UniCare</span>
-          </Link>
+          <div className="flex justify-center mb-4">
+            <UniCareLogo size="lg" subtitle="Health" />
+          </div>
 
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             {roleTab === "hospital" ? "Hospital & Blood Bank Portal" : "Sign in to your account"}

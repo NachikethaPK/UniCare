@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAI } from "../../context/AIContext";
 import AISettingsModal from "./AISettingsModal";
+import { UniCareMark } from "../common/UniCareLogo";
 import {
   FaRobot,
   FaPaperPlane,
@@ -208,8 +209,8 @@ export default function AIAssistantDashboard() {
           {/* Chat Window Topbar */}
           <div className="flex items-center justify-between pb-4 border-b border-slate-100">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shadow-xs">
-                <FaRobot className="text-xl" />
+              <div className="w-10 h-10 rounded-2xl bg-slate-900 border border-slate-700/80 flex items-center justify-center shadow-xs">
+                <UniCareMark className="w-6 h-6" />
               </div>
               <div>
                 <h2 className="font-bold text-slate-900 text-sm">UniCare Clinical Assistant</h2>
@@ -273,8 +274,8 @@ export default function AIAssistantDashboard() {
             {/* Thinking / Streaming Indicator */}
             {isThinking && (
               <div className="flex items-start gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">
-                  <FaRobot className="text-sm" />
+                <div className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700/80 flex items-center justify-center shrink-0">
+                  <UniCareMark className="w-5 h-5" />
                 </div>
                 <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-none px-4 py-3 shadow-xs flex items-center gap-2">
                   <span className="text-xs text-slate-600 font-semibold">Analyzing medical knowledge...</span>
