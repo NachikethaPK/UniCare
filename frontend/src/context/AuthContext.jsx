@@ -6,6 +6,13 @@ const AuthContext = createContext();
 
 const initialRegisteredAccounts = [
   {
+    id: "admin-owner-unicare",
+    name: "Site Owner & Developer",
+    email: "admin@unicare.health",
+    password: "adminpassword123",
+    role: "admin",
+  },
+  {
     id: "demo-user-123",
     name: "Chandrika Sharma",
     email: "chandrika@example.com",
@@ -68,10 +75,14 @@ export function AuthProvider({ children }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Ensure initial demo hospitals are included if not present
+        // Ensure initial demo hospitals and admin are included if not present
+        const hasAdmin = parsed.some((acc) => acc.role === "admin");
         const hasHospital = parsed.some((acc) => acc.role === "hospital");
-        if (!hasHospital) {
-          const merged = [...parsed, ...initialRegisteredAccounts.slice(1)];
+        if (!hasAdmin || !hasHospital) {
+          const toAdd = initialRegisteredAccounts.filter(
+            (init) => !parsed.some((p) => p.email.toLowerCase() === init.email.toLowerCase())
+          );
+          const merged = [...parsed, ...toAdd];
           localStorage.setItem("unicare_registered_accounts", JSON.stringify(merged));
           return merged;
         }
@@ -258,6 +269,7 @@ export function AuthProvider({ children }) {
         register,
         logout,
         isHospital: user?.role === "hospital",
+        isAdmin: user?.role === "admin",
       }}
     >
       {children}

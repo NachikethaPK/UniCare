@@ -11,6 +11,7 @@ import PetDashboard from "../pages/PetProfile/PetDashboard";
 import AIAssistant from "../pages/AIAssistant/AIAssistant";
 import Profile from "../pages/HumanProfile/Profile";
 import PersonalDetails from "../pages/PersonalDetails/PersonalDetails";
+import AdminPortal from "../pages/Admin/AdminPortal";
 import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
@@ -110,6 +111,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Admin Maintenance Portal (Has built-in master access gate) */}
+      <Route path="/admin" element={<AdminPortal />} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

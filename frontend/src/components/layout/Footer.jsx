@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin, FiLock } from "react-icons/fi";
 import UniCareLogo from "../common/UniCareLogo";
 
 function Footer() {
@@ -45,6 +45,16 @@ function Footer() {
             <li><Link to="/signup" className="hover:text-white transition-colors">Create Account</Link></li>
             <li><Link to="/dashboard" className="hover:text-white transition-colors">Portal Dashboard</Link></li>
             <li><Link to="/profile" className="hover:text-white transition-colors">Security & Privacy</Link></li>
+            <li className="pt-2 border-t border-slate-900 mt-2">
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-1.5 text-slate-400 hover:text-amber-400 transition-colors group"
+                title="Site Owner & Maintenance Console"
+              >
+                <FiLock className="w-3 h-3 text-slate-400 group-hover:text-amber-400 transition-colors" />
+                <span>Admin Portal</span>
+              </Link>
+            </li>
           </ul>
         </div>
 

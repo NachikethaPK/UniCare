@@ -9,6 +9,7 @@ import profileRoutes from "./routes/profileRoutes.js";
 import bloodDonationRoutes from "./routes/bloodDonationRoutes.js";
 import healthRecordRoutes from "./routes/healthRecordRoutes.js";
 import petRoutes from "./routes/petRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/blood", bloodDonationRoutes);
 app.use("/api/records", healthRecordRoutes);
 app.use("/api/pets", petRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use((err, _, res, __) => res.status(500).json({ message: err.message || "Server error" }));
 
