@@ -34,8 +34,8 @@ function Footer() {
             <li><a href="#features" className="hover:text-white transition-colors">Core Architecture</a></li>
             <li><a href="#services" className="hover:text-white transition-colors">Specialist Network</a></li>
             <li><Link to="/blood-donation" className="hover:text-white transition-colors">Blood Donation Radar</Link></li>
-            <li><Link to="/pet-dashboard" className="hover:text-white transition-colors">Veterinary Health Vault</Link></li>
-            <li><Link to="/ai-assistant" className="hover:text-white transition-colors">AI Clinical Triage</Link></li>
+            <li><Link to="/pets" className="hover:text-white transition-colors">Veterinary Health Vault</Link></li>
+            <li><Link to="/ai" className="hover:text-white transition-colors">AI Clinical Triage</Link></li>
           </ul>
         </div>
 

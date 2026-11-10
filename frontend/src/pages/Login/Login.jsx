@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   FiMail,
@@ -9,6 +9,7 @@ import {
   FiArrowRight,
   FiUser,
   FiPlusSquare,
+  FiShield,
 } from "react-icons/fi";
 import ThemeToggle from "../../components/common/ThemeToggle";
 
@@ -18,8 +19,19 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectFrom = location.state?.from;
+  const noticeMessage = location.state?.message;
+
+  useEffect(() => {
+    if (user) {
+      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : "/dashboard");
+      navigate(destination, { replace: true });
+    }
+  }, [user, redirectFrom, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,11 +40,8 @@ function Login() {
     const result = await login(email, password);
     setLoading(false);
     if (result.success) {
-      if (result.user?.role === "hospital") {
-        navigate("/blood");
-      } else {
-        navigate("/dashboard");
-      }
+      const destination = redirectFrom || (result.user?.role === "hospital" ? "/blood" : "/dashboard");
+      navigate(destination, { replace: true });
     } else {
       setError(result.message);
     }
@@ -46,7 +55,8 @@ function Login() {
     const result = await login(demoEmail, "password123");
     setLoading(false);
     if (result.success) {
-      navigate("/blood");
+      const destination = redirectFrom || "/blood";
+      navigate(destination, { replace: true });
     } else {
       setError(result.message);
     }
@@ -78,6 +88,14 @@ function Login() {
               : "Access your clinical records, blood radar & appointments"}
           </p>
         </div>
+
+        {/* Security Notice from Protected Route or Learn More redirection */}
+        {noticeMessage && !error && (
+          <div className="mb-5 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2.5">
+            <FiShield className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+            <span>{noticeMessage}</span>
+          </div>
+        )}
 
         {/* Role Toggle Switcher */}
         <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
@@ -215,14 +233,22 @@ function Login() {
           {roleTab === "hospital" ? (
             <p className="text-xs text-slate-500 dark:text-slate-400">
               New Hospital / Medical Institution?{" "}
-              <Link to="/signup?role=hospital" className="font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700">
+              <Link
+                to="/signup?role=hospital"
+                state={location.state}
+                className="font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700"
+              >
                 Register your hospital
               </Link>
             </p>
           ) : (
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Don't have an account?{" "}
-              <Link to="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700">
+              <Link
+                to="/signup"
+                state={location.state}
+                className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700"
+              >
                 Create account
               </Link>
             </p>

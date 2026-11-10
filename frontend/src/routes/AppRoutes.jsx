@@ -11,30 +11,108 @@ import PetDashboard from "../pages/PetProfile/PetDashboard";
 import AIAssistant from "../pages/AIAssistant/AIAssistant";
 import Profile from "../pages/HumanProfile/Profile";
 import PersonalDetails from "../pages/PersonalDetails/PersonalDetails";
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
     <Routes>
-        {/* Home */}
-        <Route path="/" element={<Home />} />
+      {/* Public Pages */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
-        {/* Authentication */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+      {/* Protected Healthcare Features & Dashboard */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/appointments"
+        element={
+          <ProtectedRoute>
+            <Appointments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/records"
+        element={
+          <ProtectedRoute>
+            <HealthRecords />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/blood"
+        element={
+          <ProtectedRoute>
+            <BloodDonation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/blood-donation"
+        element={
+          <ProtectedRoute>
+            <BloodDonation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pets"
+        element={
+          <ProtectedRoute>
+            <PetDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pet-dashboard"
+        element={
+          <ProtectedRoute>
+            <PetDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai"
+        element={
+          <ProtectedRoute>
+            <AIAssistant />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai-assistant"
+        element={
+          <ProtectedRoute>
+            <AIAssistant />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/personal-details"
+        element={
+          <ProtectedRoute>
+            <PersonalDetails />
+          </ProtectedRoute>
+        }
+      />
 
-        {/* Dashboard & Features */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/records" element={<HealthRecords />} />
-        <Route path="/blood" element={<BloodDonation />} />
-        <Route path="/blood-donation" element={<BloodDonation />} />
-        <Route path="/pets" element={<PetDashboard />} />
-        <Route path="/ai" element={<AIAssistant />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/personal-details" element={<PersonalDetails />} />
-
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

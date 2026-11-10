@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   FiUser,
@@ -42,8 +42,19 @@ function Signup() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailStatus, setEmailStatus] = useState({ checking: false, valid: null, message: "" });
-  const { register } = useAuth();
+  const { user, register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectFrom = location.state?.from;
+  const noticeMessage = location.state?.message;
+
+  useEffect(() => {
+    if (user) {
+      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : "/dashboard");
+      navigate(destination, { replace: true });
+    }
+  }, [user, redirectFrom, navigate]);
 
   useEffect(() => {
     if (searchParams.get("role") === "hospital") {
@@ -132,11 +143,8 @@ function Signup() {
 
     setLoading(false);
     if (result.success) {
-      if (roleTab === "hospital") {
-        navigate("/blood");
-      } else {
-        navigate("/dashboard");
-      }
+      const destination = redirectFrom || (roleTab === "hospital" ? "/blood" : "/dashboard");
+      navigate(destination, { replace: true });
     } else {
       setError(result.message);
     }
@@ -168,6 +176,14 @@ function Signup() {
               : "Join the unified healthcare operating platform"}
           </p>
         </div>
+
+        {/* Security Notice from Protected Route or Learn More redirection */}
+        {noticeMessage && !error && (
+          <div className="mb-5 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2.5">
+            <FiShield className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+            <span>{noticeMessage}</span>
+          </div>
+        )}
 
         {/* Role Switcher */}
         <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
@@ -513,6 +529,7 @@ function Signup() {
             Already have an account?{" "}
             <Link
               to={roleTab === "hospital" ? "/login?role=hospital" : "/login"}
+              state={location.state}
               className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700"
             >
               Sign in
