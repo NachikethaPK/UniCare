@@ -8,6 +8,7 @@ const demoAppointments = [
   {
     id: "app-1",
     doctor: "Dr. Ananya Rao",
+    doctorEmail: "ananya.rao@hospital.unicare",
     speciality: "Cardiologist",
     date: "2026-08-15",
     time: "10:30 AM",
@@ -17,6 +18,7 @@ const demoAppointments = [
   {
     id: "app-2",
     doctor: "Dr. Vivek Sharma",
+    doctorEmail: "vivek.sharma@hospital.unicare",
     speciality: "Dermatologist",
     date: "2026-08-18",
     time: "03:00 PM",
@@ -26,6 +28,7 @@ const demoAppointments = [
   {
     id: "app-3",
     doctor: "Dr. Sneha Kapoor",
+    doctorEmail: "sneha.kapoor@hospital.unicare",
     speciality: "Neurologist",
     date: "2026-07-20",
     time: "11:00 AM",
@@ -158,6 +161,7 @@ export const AppointmentProvider = ({ children }) => {
       experience: doctorData.experience || "5 Years",
       rating: doctorData.rating || 5.0,
       contact: doctorData.contact || "",
+      email: doctorData.email ? doctorData.email.trim() : "",
       isCustom: true,
     };
     setCustomDoctors((prev) => [newDoc, ...prev]);

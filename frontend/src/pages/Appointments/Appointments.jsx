@@ -25,6 +25,7 @@ function Appointments() {
       speciality: "Cardiologist",
       experience: "12 Years",
       rating: 4.9,
+      email: "ananya.rao@hospital.unicare",
     },
     {
       id: "default-2",
@@ -32,6 +33,7 @@ function Appointments() {
       speciality: "Dermatologist",
       experience: "9 Years",
       rating: 4.8,
+      email: "vivek.sharma@hospital.unicare",
     },
     {
       id: "default-3",
@@ -39,6 +41,7 @@ function Appointments() {
       speciality: "Neurologist",
       experience: "15 Years",
       rating: 5.0,
+      email: "sneha.kapoor@hospital.unicare",
     },
   ];
 

@@ -5,6 +5,7 @@ function AddDoctorModal({ open, onClose }) {
   const { addCustomDoctor } = useAppointments();
   const [form, setForm] = useState({
     name: "",
+    email: "",
     speciality: "General Physician",
     customSpeciality: "",
     experience: "5 Years",
@@ -31,6 +32,7 @@ function AddDoctorModal({ open, onClose }) {
 
     addCustomDoctor({
       name: form.name.trim(),
+      email: form.email.trim(),
       speciality: finalSpeciality,
       experience: form.experience || "5 Years",
       contact: form.contact || "",
@@ -41,6 +43,7 @@ function AddDoctorModal({ open, onClose }) {
       setSuccessMsg(false);
       setForm({
         name: "",
+        email: "",
         speciality: "General Physician",
         customSpeciality: "",
         experience: "5 Years",
@@ -130,6 +133,23 @@ function AddDoctorModal({ open, onClose }) {
                 />
               </div>
             )}
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">
+                Doctor's Official Email (For Automatic Appointment Dispatch)
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="e.g. doctor@clinic.com"
+                className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                Appointment booking requests will be automatically emailed to this doctor with the patient name and symptoms.
+              </p>
+            </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Hospital / Contact Details (Optional)</label>

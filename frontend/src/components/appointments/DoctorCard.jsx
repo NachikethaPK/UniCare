@@ -1,4 +1,4 @@
-import { FiUserCheck, FiStar, FiCalendar, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiUserCheck, FiStar, FiCalendar, FiPlus, FiTrash2, FiMail } from "react-icons/fi";
 import { useAppointments } from "../../context/AppointmentContext";
 
 function DoctorCard({ doctors, onBookDoctor, onAddDoctor }) {
@@ -58,8 +58,15 @@ function DoctorCard({ doctors, onBookDoctor, onAddDoctor }) {
               {doctor.speciality}
             </p>
 
+            {doctor.email && (
+              <p className="flex items-center justify-center gap-1.5 text-center text-slate-500 dark:text-slate-400 text-[11px] mt-1.5 truncate">
+                <FiMail className="w-3 h-3 text-slate-400 shrink-0" />
+                <span className="truncate">{doctor.email}</span>
+              </p>
+            )}
+
             {doctor.contact && (
-              <p className="text-center text-slate-400 dark:text-slate-500 text-[11px] mt-1 italic truncate">
+              <p className="text-center text-slate-400 dark:text-slate-500 text-[11px] mt-0.5 italic truncate">
                 {doctor.contact}
               </p>
             )}

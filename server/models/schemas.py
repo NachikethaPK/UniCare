@@ -12,18 +12,26 @@ class LoginRequest(BaseModel):
 
 class AppointmentCreate(BaseModel):
     doctor: str
+    doctorEmail: Optional[str] = None
+    patientName: Optional[str] = None
+    patientEmail: Optional[str] = None
     speciality: Optional[str] = None
     date: str
     time: str
+    symptoms: Optional[str] = None
     status: Optional[str] = "Upcoming"
     reminderEnabled: Optional[bool] = False
     reminderTime: Optional[str] = "1 hour before"
 
 class AppointmentUpdate(BaseModel):
     doctor: Optional[str] = None
+    doctorEmail: Optional[str] = None
+    patientName: Optional[str] = None
+    patientEmail: Optional[str] = None
     speciality: Optional[str] = None
     date: Optional[str] = None
     time: Optional[str] = None
+    symptoms: Optional[str] = None
     status: Optional[str] = None
     reminderEnabled: Optional[bool] = None
     reminderTime: Optional[str] = None

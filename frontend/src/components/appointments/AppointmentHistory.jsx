@@ -21,6 +21,9 @@ function AppointmentHistory() {
             <div>
               <h3 className="font-semibold text-slate-800 dark:text-white">{item.doctor}</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm">{item.speciality}</p>
+              {item.doctorEmail && (
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{item.doctorEmail}</p>
+              )}
               <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">{item.date}</p>
             </div>
 

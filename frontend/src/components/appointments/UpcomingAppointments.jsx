@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaCalendarAlt, FaClock, FaEdit, FaTimes, FaUserMd, FaBell, FaBellSlash } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaEdit, FaTimes, FaUserMd, FaBell, FaBellSlash, FaEnvelope } from "react-icons/fa";
 import { useAppointments } from "../../context/AppointmentContext";
 
 function UpcomingAppointments() {
@@ -51,6 +51,13 @@ function UpcomingAppointments() {
                     <p className="text-blue-600 dark:text-blue-400 text-xs font-semibold">
                       {item.speciality}
                     </p>
+
+                    {item.doctorEmail && (
+                      <p className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-[11px] mt-1">
+                        <FaEnvelope className="text-[10px] text-blue-500" />
+                        <span>{item.doctorEmail}</span>
+                      </p>
+                    )}
 
                     {item.symptoms && (
                       <p className="text-slate-500 dark:text-slate-400 text-xs mt-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-700/60 max-w-md">
@@ -138,6 +145,17 @@ function UpcomingAppointments() {
                 value={editing.doctor}
                 onChange={(e) => setEditing({ ...editing, doctor: e.target.value })}
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Doctor Email</label>
+              <input
+                type="email"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 text-sm focus:outline-none focus:border-blue-500"
+                value={editing.doctorEmail || ""}
+                onChange={(e) => setEditing({ ...editing, doctorEmail: e.target.value })}
+                placeholder="doctor@hospital.unicare"
               />
             </div>
 
