@@ -8,6 +8,7 @@ import { AIProvider } from "./context/AIContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { FamilyProvider } from "./context/FamilyContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { DoctorProvider } from "./context/DoctorContext";
 import AppRoutes from "./routes/AppRoutes";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 
@@ -19,17 +20,19 @@ function App() {
         <AuthProvider>
           <FamilyProvider>
             <AppointmentProvider>
-              <HealthRecordProvider>
-                <BloodDonationProvider>
-                  <PetProvider>
-                    <AIProvider>
-                      <ProfileProvider>
-                        <AppRoutes />
-                      </ProfileProvider>
-                    </AIProvider>
-                  </PetProvider>
-                </BloodDonationProvider>
-              </HealthRecordProvider>
+              <DoctorProvider>
+                <HealthRecordProvider>
+                  <BloodDonationProvider>
+                    <PetProvider>
+                      <AIProvider>
+                        <ProfileProvider>
+                          <AppRoutes />
+                        </ProfileProvider>
+                      </AIProvider>
+                    </PetProvider>
+                  </BloodDonationProvider>
+                </HealthRecordProvider>
+              </DoctorProvider>
             </AppointmentProvider>
           </FamilyProvider>
         </AuthProvider>

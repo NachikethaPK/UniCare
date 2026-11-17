@@ -64,6 +64,15 @@ function Topbar({ onToggleMobile = () => {}, pageTitle = "Dashboard" }) {
           />
         </form>
 
+        {user?.role === "doctor" && (
+          <Link
+            to="/doctor-portal"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition"
+          >
+            <span>🩺 Doctor Station</span>
+          </Link>
+        )}
+
         {/* Family Switcher */}
         <FamilyProfileSwitcher onOpenAddMember={() => navigate("/profile")} />
 

@@ -19,12 +19,15 @@ function ProtectedRoute({ children, allowedRoles }) {
 
   // Not authenticated: redirect to login with saved location state
   if (!user || !token) {
+    const isDoctorRoute = location.pathname.includes("doctor");
     return (
       <Navigate
-        to="/login"
+        to={isDoctorRoute ? "/login?role=doctor" : "/login"}
         state={{
           from: location.pathname + location.search,
-          message: "Please sign in to access this feature.",
+          message: isDoctorRoute
+            ? "Please sign in to access the Doctor Portal."
+            : "Please sign in to access this feature.",
         }}
         replace
       />
@@ -35,7 +38,7 @@ function ProtectedRoute({ children, allowedRoles }) {
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return (
       <Navigate
-        to={user.role === "hospital" ? "/blood" : "/dashboard"}
+        to={user.role === "hospital" ? "/blood" : user.role === "doctor" ? "/doctor-portal" : "/dashboard"}
         replace
       />
     );

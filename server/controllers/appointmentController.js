@@ -40,10 +40,45 @@ export const createAppointment = async (req, res) => {
   }
 };
 
+export const getDoctorSchedule = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const doctorEmail = (req.query.doctorEmail || user?.email || "").toLowerCase().trim();
+    const doctorName = (req.query.doctor || user?.name || "").trim();
+    const { date } = req.query;
+
+    const conditions = [];
+    if (doctorEmail) {
+      conditions.push({ doctorEmail: new RegExp(`^${doctorEmail}$`, "i") });
+    }
+    if (doctorName) {
+      conditions.push({ doctor: new RegExp(doctorName, "i") });
+    }
+
+    const query = conditions.length > 0 ? { $or: conditions } : {};
+
+    if (date) {
+      query.date = date;
+    }
+
+    const appointments = await Appointment.find(query).sort({ date: 1, time: 1 });
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const updateAppointment = async (req, res) => {
   try {
+    const user = await User.findById(req.user.id);
+    const filter = { _id: req.params.id };
+
+    if (user?.role !== "doctor" && user?.role !== "admin") {
+      filter.user = req.user.id;
+    }
+
     const appointment = await Appointment.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id },
+      filter,
       req.body,
       { new: true }
     );

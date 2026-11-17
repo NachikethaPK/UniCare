@@ -1,10 +1,18 @@
 import { Router } from "express";
-import { getAppointments, createAppointment, updateAppointment, deleteAppointment } from "../controllers/appointmentController.js";
+import {
+  getAppointments,
+  createAppointment,
+  updateAppointment,
+  deleteAppointment,
+  getDoctorSchedule,
+} from "../controllers/appointmentController.js";
 import { protect } from "../middleware/auth.js";
 
 const router = Router();
 
 router.use(protect);
+
+router.get("/doctor/schedule", getDoctorSchedule);
 
 router.route("/")
   .get(getAppointments)

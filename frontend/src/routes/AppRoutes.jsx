@@ -12,6 +12,7 @@ import AIAssistant from "../pages/AIAssistant/AIAssistant";
 import Profile from "../pages/HumanProfile/Profile";
 import PersonalDetails from "../pages/PersonalDetails/PersonalDetails";
 import AdminPortal from "../pages/Admin/AdminPortal";
+import DoctorPortal from "../pages/Doctor/DoctorPortal";
 import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
@@ -111,6 +112,18 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Doctor & Specialist Portal */}
+      <Route
+        path="/doctor-portal"
+        element={
+          <ProtectedRoute allowedRoles={["doctor", "admin"]}>
+            <DoctorPortal />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/doctor" element={<Navigate to="/doctor-portal" replace />} />
+      <Route path="/doctor-login" element={<Navigate to="/login?role=doctor" replace />} />
 
       {/* Admin Maintenance Portal (Has built-in master access gate) */}
       <Route path="/admin" element={<AdminPortal />} />

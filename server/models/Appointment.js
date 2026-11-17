@@ -11,9 +11,12 @@ const appointmentSchema = new mongoose.Schema(
     date: { type: String, required: true },
     time: { type: String, required: true },
     symptoms: { type: String },
-    status: { type: String, enum: ["Upcoming", "Completed", "Cancelled"], default: "Upcoming" },
+    status: { type: String, enum: ["Upcoming", "In Consultation", "Completed", "Cancelled"], default: "Upcoming" },
     reminderEnabled: { type: Boolean, default: false },
     reminderTime: { type: String, default: "1 hour before" },
+    clinicalNotes: { type: String, default: "" },
+    diagnosis: { type: String, default: "" },
+    prescription: { type: String, default: "" },
   },
   { timestamps: true }
 );

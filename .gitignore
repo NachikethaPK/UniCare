@@ -51,3 +51,5 @@ Thumbs.db
 # Archives & Temporary
 *.zip
 *.tar.gz
+temp_edge_profile/
+temp_*/

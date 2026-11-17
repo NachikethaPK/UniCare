@@ -14,19 +14,36 @@ import {
   FiNavigation,
   FiCheckCircle,
   FiLoader,
+  FiAward,
+  FiFileText,
 } from "react-icons/fi";
+import { FaUserMd } from "react-icons/fa";
 import ThemeToggle from "../../components/common/ThemeToggle";
 import UniCareLogo from "../../components/common/UniCareLogo";
 import { quickValidateEmail, verifyEmailLegitimacy } from "../../utils/emailValidator";
 
 function Signup() {
   const [searchParams] = useSearchParams();
-  const [roleTab, setRoleTab] = useState(searchParams.get("role") === "hospital" ? "hospital" : "patient");
+  const initialRole = searchParams.get("role") === "hospital"
+    ? "hospital"
+    : searchParams.get("role") === "doctor"
+    ? "doctor"
+    : "patient";
+  const [roleTab, setRoleTab] = useState(initialRole);
 
   // Patient Fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // Doctor Specific Fields
+  const [doctorName, setDoctorName] = useState("");
+  const [speciality, setSpeciality] = useState("General Physician");
+  const [qualification, setQualification] = useState("MBBS, MD");
+  const [experience, setExperience] = useState("5 Years");
+  const [hospitalAffiliation, setHospitalAffiliation] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
+  const [doctorPhone, setDoctorPhone] = useState("");
 
   // Hospital Specific Fields
   const [hospitalName, setHospitalName] = useState("");
@@ -51,14 +68,15 @@ function Signup() {
 
   useEffect(() => {
     if (user) {
-      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : "/dashboard");
+      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : user.role === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     }
   }, [user, redirectFrom, navigate]);
 
   useEffect(() => {
-    if (searchParams.get("role") === "hospital") {
-      setRoleTab("hospital");
+    const roleParam = searchParams.get("role");
+    if (roleParam === "hospital" || roleParam === "doctor" || roleParam === "patient") {
+      setRoleTab(roleParam);
     }
   }, [searchParams]);
 
@@ -137,13 +155,26 @@ function Signup() {
         emergencyContact: emergencyContact.trim() || phone.trim(),
       };
       result = await register(hospitalName, email, password, "hospital", hospitalDetails);
+    } else if (roleTab === "doctor") {
+      const formattedDoctorName = doctorName.trim().startsWith("Dr.")
+        ? doctorName.trim()
+        : `Dr. ${doctorName.trim()}`;
+      const doctorDetails = {
+        speciality: speciality.trim(),
+        qualification: qualification.trim(),
+        experience: experience.trim(),
+        hospital: hospitalAffiliation.trim() || "UniCare Health Network",
+        registrationNumber: registrationNumber.trim(),
+        phone: doctorPhone.trim(),
+      };
+      result = await register(formattedDoctorName, email, password, "doctor", null, doctorDetails);
     } else {
       result = await register(name, email, password, "patient");
     }
 
     setLoading(false);
     if (result.success) {
-      const destination = redirectFrom || (roleTab === "hospital" ? "/blood" : "/dashboard");
+      const destination = redirectFrom || (roleTab === "hospital" ? "/blood" : roleTab === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     } else {
       setError(result.message);
@@ -165,11 +196,17 @@ function Signup() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-            {roleTab === "hospital" ? "Register Your Hospital" : "Create your account"}
+            {roleTab === "hospital"
+              ? "Register Your Hospital"
+              : roleTab === "doctor"
+              ? "Register as Medical Specialist"
+              : "Create your account"}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">
             {roleTab === "hospital"
               ? "Join the emergency blood network to publish requests and connect with donors"
+              : roleTab === "doctor"
+              ? "Manage consultation schedules, patients' medical history, and clinical appointments"
               : "Join the unified healthcare operating platform"}
           </p>
         </div>
@@ -183,36 +220,53 @@ function Signup() {
         )}
 
         {/* Role Switcher */}
-        <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
+        <div className="grid grid-cols-3 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
           <button
             type="button"
             onClick={() => {
               setRoleTab("patient");
               setError("");
             }}
-            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition ${
+            className={`py-2 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
               roleTab === "patient"
                 ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
             <FiUser className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>Patient / Donor</span>
+            <span>Patient</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setRoleTab("doctor");
+              setError("");
+            }}
+            className={`py-2 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
+              roleTab === "doctor"
+                ? "bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-400 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            <FaUserMd className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Doctor</span>
+          </button>
+
           <button
             type="button"
             onClick={() => {
               setRoleTab("hospital");
               setError("");
             }}
-            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition ${
+            className={`py-2 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
               roleTab === "hospital"
                 ? "bg-white dark:bg-slate-700 text-rose-700 dark:text-rose-400 shadow-sm"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
             <FiPlusSquare className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-            <span>Hospital Registration</span>
+            <span>Hospital</span>
           </button>
         </div>
 
@@ -304,6 +358,182 @@ function Signup() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
                     required
+                  />
+                </div>
+              </div>
+            </>
+          ) : roleTab === "doctor" ? (
+            /* Doctor Specific Fields */
+            <>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                  Doctor Full Name *
+                </label>
+                <div className="relative">
+                  <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="e.g. Dr. Priya Sharma"
+                    value={doctorName}
+                    onChange={(e) => setDoctorName(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                  Official Medical Email *
+                </label>
+                <div className="relative">
+                  <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
+                  <input
+                    type="email"
+                    placeholder="doctor@hospital.unicare"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailStatus.valid !== null) setEmailStatus({ checking: false, valid: null, message: "" });
+                    }}
+                    onBlur={() => validateCurrentEmail()}
+                    className={`w-full border text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-10 py-2.5 text-xs sm:text-sm focus:outline-none transition ${
+                      emailStatus.valid === true
+                        ? "border-emerald-500 focus:border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20"
+                        : emailStatus.valid === false
+                        ? "border-rose-500 focus:border-rose-500 bg-rose-50/20 dark:bg-rose-950/20"
+                        : "border-slate-200 dark:border-slate-700 focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800"
+                    }`}
+                    required
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {emailStatus.checking && <FiLoader className="w-4 h-4 text-emerald-500 animate-spin" />}
+                    {emailStatus.valid === true && <FiCheckCircle className="w-4 h-4 text-emerald-500" />}
+                    {emailStatus.valid === false && <FiAlertCircle className="w-4 h-4 text-rose-500" />}
+                  </div>
+                </div>
+                {emailStatus.message && (
+                  <p
+                    className={`mt-1.5 text-[11px] flex items-center gap-1.5 ${
+                      emailStatus.valid === true
+                        ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                        : emailStatus.valid === false
+                        ? "text-rose-600 dark:text-rose-400 font-medium"
+                        : "text-emerald-600 dark:text-emerald-400"
+                    }`}
+                  >
+                    <span>{emailStatus.message}</span>
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                  Password *
+                </label>
+                <div className="relative">
+                  <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
+                  <input
+                    type="password"
+                    placeholder="Create a strong password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Medical Speciality *
+                  </label>
+                  <select
+                    value={speciality}
+                    onChange={(e) => setSpeciality(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60"
+                  >
+                    <option value="General Physician">General Physician</option>
+                    <option value="Cardiologist">Cardiologist</option>
+                    <option value="Dermatologist">Dermatologist</option>
+                    <option value="Neurologist">Neurologist</option>
+                    <option value="Pediatrician">Pediatrician</option>
+                    <option value="Orthopedic">Orthopedic</option>
+                    <option value="Gynecologist">Gynecologist</option>
+                    <option value="Psychiatrist">Psychiatrist</option>
+                    <option value="ENT Specialist">ENT Specialist</option>
+                    <option value="Endocrinologist">Endocrinologist</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Qualifications *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. MBBS, MD, DM"
+                    value={qualification}
+                    onChange={(e) => setQualification(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Experience
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 8 Years"
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Medical Council Reg No.
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. KMC-12345"
+                    value={registrationNumber}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Hospital / Clinic Affiliation
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. City Care Hospital"
+                    value={hospitalAffiliation}
+                    onChange={(e) => setHospitalAffiliation(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Contact Phone
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="+91 98765 43210"
+                    value={doctorPhone}
+                    onChange={(e) => setDoctorPhone(e.target.value)}
+                    className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/60"
                   />
                 </div>
               </div>
@@ -506,6 +736,8 @@ function Signup() {
             className={`w-full text-white font-medium py-2.5 rounded-lg transition shadow-xs flex items-center justify-center gap-2 text-xs sm:text-sm mt-6 active:scale-[0.99] ${
               roleTab === "hospital"
                 ? "bg-rose-700 hover:bg-rose-800 dark:bg-rose-700 dark:hover:bg-rose-600"
+                : roleTab === "doctor"
+                ? "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
                 : "bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
             }`}
           >
@@ -514,6 +746,8 @@ function Signup() {
                 ? "Registering..."
                 : roleTab === "hospital"
                 ? "Complete Hospital Registration"
+                : roleTab === "doctor"
+                ? "Complete Doctor Registration"
                 : "Create account"}
             </span>
             {!loading && <FiArrowRight className="w-4 h-4" />}
@@ -525,7 +759,7 @@ function Signup() {
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
             <Link
-              to={roleTab === "hospital" ? "/login?role=hospital" : "/login"}
+              to={roleTab === "hospital" ? "/login?role=hospital" : roleTab === "doctor" ? "/login?role=doctor" : "/login"}
               state={location.state}
               className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700"
             >

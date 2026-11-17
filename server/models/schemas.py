@@ -5,6 +5,9 @@ class RegisterRequest(BaseModel):
     name: str
     email: str
     password: str
+    role: Optional[str] = "patient"
+    hospitalDetails: Optional[Dict[str, Any]] = None
+    doctorDetails: Optional[Dict[str, Any]] = None
 
 class LoginRequest(BaseModel):
     email: str
@@ -22,6 +25,9 @@ class AppointmentCreate(BaseModel):
     status: Optional[str] = "Upcoming"
     reminderEnabled: Optional[bool] = False
     reminderTime: Optional[str] = "1 hour before"
+    clinicalNotes: Optional[str] = None
+    diagnosis: Optional[str] = None
+    prescription: Optional[str] = None
 
 class AppointmentUpdate(BaseModel):
     doctor: Optional[str] = None
@@ -35,6 +41,41 @@ class AppointmentUpdate(BaseModel):
     status: Optional[str] = None
     reminderEnabled: Optional[bool] = None
     reminderTime: Optional[str] = None
+    clinicalNotes: Optional[str] = None
+    diagnosis: Optional[str] = None
+    prescription: Optional[str] = None
+
+class PatientHistoryCreate(BaseModel):
+    patientName: str
+    patientEmail: Optional[str] = ""
+    patientPhone: Optional[str] = ""
+    doctor: Optional[str] = None
+    doctorEmail: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = ""
+    speciality: Optional[str] = ""
+    diagnosis: str
+    symptoms: Optional[str] = ""
+    clinicalNotes: Optional[str] = ""
+    prescription: Optional[str] = ""
+    vitals: Optional[Dict[str, Any]] = None
+    followUpDate: Optional[str] = ""
+
+class PatientHistoryUpdate(BaseModel):
+    patientName: Optional[str] = None
+    patientEmail: Optional[str] = None
+    patientPhone: Optional[str] = None
+    doctor: Optional[str] = None
+    doctorEmail: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+    speciality: Optional[str] = None
+    diagnosis: Optional[str] = None
+    symptoms: Optional[str] = None
+    clinicalNotes: Optional[str] = None
+    prescription: Optional[str] = None
+    vitals: Optional[Dict[str, Any]] = None
+    followUpDate: Optional[str] = None
 
 class ProfileUpdate(BaseModel):
     phone: Optional[str] = None

@@ -10,6 +10,7 @@ import bloodDonationRoutes from "./routes/bloodDonationRoutes.js";
 import healthRecordRoutes from "./routes/healthRecordRoutes.js";
 import petRoutes from "./routes/petRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import patientHistoryRoutes from "./routes/patientHistoryRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.get("/api/health", (_, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
 
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/patient-history", patientHistoryRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/blood", bloodDonationRoutes);
 app.use("/api/records", healthRecordRoutes);

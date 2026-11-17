@@ -13,6 +13,7 @@ from routes.blood_donation import router as blood_router
 from routes.health_records import router as records_router
 from routes.pets import router as pets_router
 from routes.ai import router as ai_router
+from routes.patient_history import router as patient_history_router
 
 load_dotenv()
 
@@ -38,6 +39,7 @@ async def health_check():
 # Mount routers
 app.include_router(auth_router)
 app.include_router(appointments_router)
+app.include_router(patient_history_router)
 app.include_router(profile_router)
 app.include_router(blood_router)
 app.include_router(records_router)

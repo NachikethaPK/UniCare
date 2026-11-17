@@ -12,13 +12,14 @@ import {
   FiLogOut,
   FiX,
 } from "react-icons/fi";
+import { FaUserMd } from "react-icons/fa";
 import ThemeToggle from "../common/ThemeToggle";
 import UniCareLogo from "../common/UniCareLogo";
 
 function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -26,6 +27,15 @@ function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   };
 
   const menuItems = [
+    ...(user?.role === "doctor"
+      ? [
+          {
+            name: "Doctor Station",
+            icon: <FaUserMd className="w-4 h-4 text-emerald-400" />,
+            path: "/doctor-portal",
+          },
+        ]
+      : []),
     {
       name: "Dashboard",
       icon: <FiGrid className="w-4 h-4" />,

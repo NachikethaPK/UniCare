@@ -50,21 +50,36 @@ function Navbar() {
 
           {user ? (
             <>
-              <Link
-                to="/dashboard"
-                className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              >
-                Dashboard
-              </Link>
+              {user.role === "doctor" ? (
+                <Link
+                  to="/doctor-portal"
+                  className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 px-3.5 py-1.5 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition"
+                >
+                  Doctor Station
+                </Link>
+              ) : (
+                <Link
+                  to="/dashboard"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  Dashboard
+                </Link>
+              )}
               <button
                 onClick={handleLogout}
-                className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 px-3.5 py-2 rounded-lg hover:bg-rose-50/60 dark:hover:bg-rose-950/40 transition"
+                className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 px-3.5 py-2 rounded-lg hover:bg-rose-50/60 dark:hover:bg-rose-950/40 transition cursor-pointer"
               >
                 Sign out
               </button>
             </>
           ) : (
             <>
+              <Link
+                to="/login?role=doctor"
+                className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition flex items-center gap-1.5"
+              >
+                <span>Doctor Portal</span>
+              </Link>
               <Link
                 to="/login"
                 className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
@@ -126,11 +141,11 @@ function Navbar() {
             {user ? (
               <>
                 <Link
-                  to="/dashboard"
+                  to={user.role === "doctor" ? "/doctor-portal" : "/dashboard"}
                   onClick={() => setMobileMenu(false)}
-                  className="w-full text-center bg-slate-900 dark:bg-blue-600 text-white py-2.5 rounded-lg text-sm font-medium"
+                  className="w-full text-center bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-medium"
                 >
-                  Go to Dashboard
+                  {user.role === "doctor" ? "Open Doctor Station" : "Go to Dashboard"}
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -141,6 +156,13 @@ function Navbar() {
               </>
             ) : (
               <>
+                <Link
+                  to="/login?role=doctor"
+                  onClick={() => setMobileMenu(false)}
+                  className="w-full text-center bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 py-2.5 rounded-lg text-sm font-semibold"
+                >
+                  Doctor Sign In Portal
+                </Link>
                 <Link
                   to="/login"
                   onClick={() => setMobileMenu(false)}

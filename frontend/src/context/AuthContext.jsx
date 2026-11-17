@@ -67,6 +67,51 @@ const initialRegisteredAccounts = [
       emergencyContact: "+91 80 4199 4400",
     },
   },
+  {
+    id: "doc-demo-ananya",
+    name: "Dr. Ananya Rao",
+    email: "ananya.rao@hospital.unicare",
+    password: "password123",
+    role: "doctor",
+    doctorDetails: {
+      speciality: "Cardiologist",
+      experience: "12 Years",
+      qualification: "MBBS, MD (Cardiology), FACC",
+      hospital: "UniCare Multispeciality Cardiac Wing",
+      registrationNumber: "KMC-48291",
+      phone: "+91 98765 43210",
+    },
+  },
+  {
+    id: "doc-demo-vivek",
+    name: "Dr. Vivek Sharma",
+    email: "vivek.sharma@hospital.unicare",
+    password: "password123",
+    role: "doctor",
+    doctorDetails: {
+      speciality: "Dermatologist",
+      experience: "9 Years",
+      qualification: "MBBS, DVD, MD (Dermatology)",
+      hospital: "UniCare Advanced Dermatology Clinic",
+      registrationNumber: "KMC-61045",
+      phone: "+91 98765 43211",
+    },
+  },
+  {
+    id: "doc-demo-sneha",
+    name: "Dr. Sneha Kapoor",
+    email: "sneha.kapoor@hospital.unicare",
+    password: "password123",
+    role: "doctor",
+    doctorDetails: {
+      speciality: "Neurologist",
+      experience: "15 Years",
+      qualification: "MBBS, MD (Medicine), DM (Neurology)",
+      hospital: "UniCare Institute of Neurosciences",
+      registrationNumber: "KMC-32984",
+      phone: "+91 98765 43212",
+    },
+  },
 ];
 
 export function AuthProvider({ children }) {
@@ -75,10 +120,11 @@ export function AuthProvider({ children }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Ensure initial demo hospitals and admin are included if not present
+        // Ensure initial demo hospitals, doctors, and admin are included if not present
         const hasAdmin = parsed.some((acc) => acc.role === "admin");
         const hasHospital = parsed.some((acc) => acc.role === "hospital");
-        if (!hasAdmin || !hasHospital) {
+        const hasDoctor = parsed.some((acc) => acc.role === "doctor");
+        if (!hasAdmin || !hasHospital || !hasDoctor) {
           const toAdd = initialRegisteredAccounts.filter(
             (init) => !parsed.some((p) => p.email.toLowerCase() === init.email.toLowerCase())
           );
@@ -156,6 +202,7 @@ export function AuthProvider({ children }) {
         email: foundAccount.email,
         role: foundAccount.role || "patient",
         hospitalDetails: foundAccount.hospitalDetails || null,
+        doctorDetails: foundAccount.doctorDetails || null,
       };
 
       const demoToken = "token-" + foundAccount.id;
@@ -167,7 +214,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const register = async (name, email, password, role = "patient", hospitalDetails = null) => {
+  const register = async (name, email, password, role = "patient", hospitalDetails = null, doctorDetails = null) => {
     const cleanEmail = email.trim().toLowerCase();
 
     // Check if already registered
@@ -197,6 +244,7 @@ export function AuthProvider({ children }) {
         password,
         role,
         ...(role === "hospital" && hospitalDetails ? { hospitalDetails } : {}),
+        ...(role === "doctor" && doctorDetails ? { doctorDetails } : {}),
       };
       const response = await api.post("/auth/register", payload);
       const { token: resToken, user: resUser } = response.data;
@@ -207,6 +255,7 @@ export function AuthProvider({ children }) {
         email: resUser.email || cleanEmail,
         role: resUser.role || role,
         hospitalDetails: resUser.hospitalDetails || hospitalDetails,
+        doctorDetails: resUser.doctorDetails || doctorDetails,
       };
 
       const newAcc = {
@@ -216,6 +265,7 @@ export function AuthProvider({ children }) {
         password,
         role,
         hospitalDetails,
+        doctorDetails,
       };
       setRegisteredAccounts((prev) => [...prev, newAcc]);
 
@@ -271,13 +321,14 @@ export function AuthProvider({ children }) {
           message: error.response.data.message,
         };
       }
-      const newUserId = (role === "hospital" ? "hosp-" : "user-") + Date.now();
+      const newUserId = (role === "hospital" ? "hosp-" : role === "doctor" ? "doc-" : "user-") + Date.now();
       const newUser = {
         id: newUserId,
-        name: name || (role === "hospital" ? "Hospital Partner" : "User"),
+        name: name || (role === "hospital" ? "Hospital Partner" : role === "doctor" ? "Doctor" : "User"),
         email: cleanEmail,
         role,
         hospitalDetails,
+        doctorDetails,
       };
       const newAcc = {
         id: newUserId,
@@ -286,6 +337,7 @@ export function AuthProvider({ children }) {
         password,
         role,
         hospitalDetails,
+        doctorDetails,
       };
 
       setRegisteredAccounts((prev) => [...prev, newAcc]);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   FiMail,
@@ -9,12 +9,16 @@ import {
   FiUser,
   FiPlusSquare,
   FiShield,
+  FiUserCheck,
 } from "react-icons/fi";
+import { FaUserMd } from "react-icons/fa";
 import ThemeToggle from "../../components/common/ThemeToggle";
 import UniCareLogo from "../../components/common/UniCareLogo";
 
 function Login() {
-  const [roleTab, setRoleTab] = useState("patient"); // "patient" or "hospital"
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get("role") || (window.location.pathname.includes("doctor") ? "doctor" : "patient");
+  const [roleTab, setRoleTab] = useState(initialRole); // "patient", "doctor", or "hospital"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,7 +32,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : "/dashboard");
+      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : user.role === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     }
   }, [user, redirectFrom, navigate]);
@@ -40,7 +44,7 @@ function Login() {
     const result = await login(email, password);
     setLoading(false);
     if (result.success) {
-      const destination = redirectFrom || (result.user?.role === "hospital" ? "/blood" : "/dashboard");
+      const destination = redirectFrom || (result.user?.role === "hospital" ? "/blood" : result.user?.role === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     } else {
       setError(result.message);
@@ -62,6 +66,21 @@ function Login() {
     }
   };
 
+  const handleDemoDoctorLogin = async (demoEmail) => {
+    setError("");
+    setLoading(true);
+    setEmail(demoEmail);
+    setPassword("password123");
+    const result = await login(demoEmail, "password123");
+    setLoading(false);
+    if (result.success) {
+      const destination = redirectFrom || "/doctor-portal";
+      navigate(destination, { replace: true });
+    } else {
+      setError(result.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-6 py-12 transition-colors relative">
       {/* Top Controls */}
@@ -77,11 +96,17 @@ function Login() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-            {roleTab === "hospital" ? "Hospital & Blood Bank Portal" : "Sign in to your account"}
+            {roleTab === "hospital"
+              ? "Hospital & Blood Bank Portal"
+              : roleTab === "doctor"
+              ? "Doctor & Specialist Portal"
+              : "Sign in to your account"}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">
             {roleTab === "hospital"
               ? "Publish emergency blood requests & manage donor matches"
+              : roleTab === "doctor"
+              ? "Review today's consultations schedule & store patient history"
               : "Access your clinical records, blood radar & appointments"}
           </p>
         </div>
@@ -95,7 +120,7 @@ function Login() {
         )}
 
         {/* Role Toggle Switcher */}
-        <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
+        <div className="grid grid-cols-3 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
           <button
             type="button"
             onClick={() => {
@@ -104,15 +129,34 @@ function Login() {
               setEmail("");
               setPassword("");
             }}
-            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition ${
+            className={`py-2 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
               roleTab === "patient"
                 ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
             <FiUser className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>Patient / Donor</span>
+            <span>Patient</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setRoleTab("doctor");
+              setError("");
+              setEmail("");
+              setPassword("");
+            }}
+            className={`py-2 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
+              roleTab === "doctor"
+                ? "bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-400 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            <FaUserMd className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Doctor</span>
+          </button>
+
           <button
             type="button"
             onClick={() => {
@@ -121,16 +165,50 @@ function Login() {
               setEmail("");
               setPassword("");
             }}
-            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition ${
+            className={`py-2 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
               roleTab === "hospital"
                 ? "bg-white dark:bg-slate-700 text-rose-700 dark:text-rose-400 shadow-sm"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
             <FiPlusSquare className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-            <span>Hospital Sign In</span>
+            <span>Hospital</span>
           </button>
         </div>
+
+        {/* Doctor Quick Demo Helpers */}
+        {roleTab === "doctor" && (
+          <div className="mb-5 p-3.5 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-900/50 rounded-xl">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 mb-2 flex items-center gap-1.5">
+              <span>🩺 One-Click Specialist Doctor Login</span>
+            </p>
+            <div className="flex flex-col gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleDemoDoctorLogin("ananya.rao@hospital.unicare")}
+                className="w-full text-left px-3 py-1.5 text-xs rounded-lg bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-900/50 hover:border-emerald-400 dark:hover:border-emerald-600 text-slate-800 dark:text-slate-200 font-medium flex items-center justify-between transition hover:shadow-xs"
+              >
+                <div>
+                  <span className="font-bold">Dr. Ananya Rao</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 ml-1.5">(Cardiologist)</span>
+                </div>
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">Sign in</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDemoDoctorLogin("vivek.sharma@hospital.unicare")}
+                className="w-full text-left px-3 py-1.5 text-xs rounded-lg bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-900/50 hover:border-emerald-400 dark:hover:border-emerald-600 text-slate-800 dark:text-slate-200 font-medium flex items-center justify-between transition hover:shadow-xs"
+              >
+                <div>
+                  <span className="font-bold">Dr. Vivek Sharma</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 ml-1.5">(Dermatologist)</span>
+                </div>
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">Sign in</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Hospital Quick Demo Helpers */}
         {roleTab === "hospital" && (
@@ -171,13 +249,23 @@ function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-              {roleTab === "hospital" ? "Official Hospital Email" : "Email Address"}
+              {roleTab === "hospital"
+                ? "Official Hospital Email"
+                : roleTab === "doctor"
+                ? "Doctor's Official Medical Email"
+                : "Email Address"}
             </label>
             <div className="relative">
               <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
               <input
                 type="email"
-                placeholder={roleTab === "hospital" ? "desk@apollo.unicare" : "name@example.com"}
+                placeholder={
+                  roleTab === "hospital"
+                    ? "desk@apollo.unicare"
+                    : roleTab === "doctor"
+                    ? "doctor@hospital.unicare"
+                    : "name@example.com"
+                }
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 bg-slate-50/50 dark:bg-slate-800/60 focus:bg-white dark:focus:bg-slate-800 transition"
@@ -211,6 +299,8 @@ function Login() {
             className={`w-full text-white font-medium py-2.5 rounded-lg transition shadow-xs flex items-center justify-center gap-2 text-xs sm:text-sm mt-6 active:scale-[0.99] ${
               roleTab === "hospital"
                 ? "bg-rose-700 hover:bg-rose-800 dark:bg-rose-700 dark:hover:bg-rose-600"
+                : roleTab === "doctor"
+                ? "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
                 : "bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
             }`}
           >
@@ -219,6 +309,8 @@ function Login() {
                 ? "Authenticating..."
                 : roleTab === "hospital"
                 ? "Sign into Hospital Desk"
+                : roleTab === "doctor"
+                ? "Access Doctor Portal"
                 : "Sign in"}
             </span>
             {!loading && <FiArrowRight className="w-4 h-4" />}
@@ -236,6 +328,17 @@ function Login() {
                 className="font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700"
               >
                 Register your hospital
+              </Link>
+            </p>
+          ) : roleTab === "doctor" ? (
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              New Physician / Medical Specialist?{" "}
+              <Link
+                to="/signup?role=doctor"
+                state={location.state}
+                className="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700"
+              >
+                Register as a doctor
               </Link>
             </p>
           ) : (

@@ -56,6 +56,30 @@ def send_appointment_email_py(doctor_email, doctor_name, patient_name, patient_e
     except Exception as e:
         print(f"[Gmail SMTP Python] Could not send email: {e}")
 
+@router.get("/doctor/schedule")
+async def get_doctor_schedule(
+    date: Optional[str] = None,
+    user_id: str = Depends(get_current_user)
+):
+    db = get_db()
+    user_query = {"_id": ObjectId(user_id)} if ObjectId.is_valid(user_id) else {"_id": user_id}
+    user_doc = await db.users.find_one(user_query)
+    doctor_email = (user_doc.get("email") or "").lower().strip() if user_doc else ""
+    doctor_name = (user_doc.get("name") or "").strip() if user_doc else ""
+
+    conditions = []
+    if doctor_email:
+        conditions.append({"doctorEmail": {"$regex": f"^{doctor_email}$", "$options": "i"}})
+    if doctor_name:
+        conditions.append({"doctor": {"$regex": doctor_name, "$options": "i"}})
+
+    query = {"$or": conditions} if conditions else {}
+    if date:
+        query["date"] = date
+
+    appointments = await db.appointments.find(query).sort([("date", 1), ("time", 1)]).to_list(1000)
+    return serialize_docs(appointments)
+
 @router.get("")
 async def get_appointments(user_id: str = Depends(get_current_user)):
     db = get_db()
@@ -113,15 +137,21 @@ async def update_appointment(
         return JSONResponse(status_code=404, content={"message": "Appointment not found"})
 
     update_data = {k: v for k, v in payload.model_dump().items() if v is not None}
+    user_query = {"_id": ObjectId(user_id)} if ObjectId.is_valid(user_id) else {"_id": user_id}
+    user_doc = await db.users.find_one(user_query)
+    is_doctor = user_doc and user_doc.get("role") in ["doctor", "admin"]
+
+    filter_query = {"_id": obj_id} if is_doctor else {"_id": obj_id, "user": user_id}
+
     if not update_data:
-        existing = await db.appointments.find_one({"_id": obj_id, "user": user_id})
+        existing = await db.appointments.find_one(filter_query)
         if not existing:
             return JSONResponse(status_code=404, content={"message": "Appointment not found"})
         return serialize_doc(existing)
 
     update_data["updatedAt"] = datetime.datetime.now(datetime.timezone.utc)
     updated = await db.appointments.find_one_and_update(
-        {"_id": obj_id, "user": user_id},
+        filter_query,
         {"$set": update_data},
         return_document=True
     )

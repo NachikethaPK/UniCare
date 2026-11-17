@@ -13,7 +13,7 @@ export const validateEmail = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  const { name, email, password, role = "patient", hospitalDetails } = req.body;
+  const { name, email, password, role = "patient", hospitalDetails, doctorDetails } = req.body;
   const cleanEmail = email?.trim().toLowerCase();
 
   // Validate email legitimacy (syntax, disposable filter, and DNS MX record)
@@ -36,6 +36,7 @@ export const register = async (req, res) => {
     password: hashedPassword,
     role: role || "patient",
     hospitalDetails: role === "hospital" ? hospitalDetails : undefined,
+    doctorDetails: role === "doctor" ? doctorDetails : undefined,
   });
 
   res.status(201).json({
@@ -46,6 +47,7 @@ export const register = async (req, res) => {
       email: user.email,
       role: user.role,
       hospitalDetails: user.hospitalDetails,
+      doctorDetails: user.doctorDetails,
     },
   });
 };
@@ -66,6 +68,7 @@ export const login = async (req, res) => {
       email: user.email,
       role: user.role || "patient",
       hospitalDetails: user.hospitalDetails,
+      doctorDetails: user.doctorDetails,
     },
   });
 };
