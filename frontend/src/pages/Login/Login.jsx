@@ -32,7 +32,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : user.role === "doctor" ? "/doctor-portal" : "/dashboard");
+      const destination = redirectFrom || (user.role === "hospital" ? "/hospital-portal" : user.role === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     }
   }, [user, redirectFrom, navigate]);
@@ -44,7 +44,7 @@ function Login() {
     const result = await login(email, password);
     setLoading(false);
     if (result.success) {
-      const destination = redirectFrom || (result.user?.role === "hospital" ? "/blood" : result.user?.role === "doctor" ? "/doctor-portal" : "/dashboard");
+      const destination = redirectFrom || (result.user?.role === "hospital" ? "/hospital-portal" : result.user?.role === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     } else {
       setError(result.message);
@@ -59,7 +59,7 @@ function Login() {
     const result = await login(demoEmail, "password123");
     setLoading(false);
     if (result.success) {
-      const destination = redirectFrom || "/blood";
+      const destination = redirectFrom || "/hospital-portal";
       navigate(destination, { replace: true });
     } else {
       setError(result.message);

@@ -73,6 +73,15 @@ function Topbar({ onToggleMobile = () => {}, pageTitle = "Dashboard" }) {
           </Link>
         )}
 
+        {user?.role === "hospital" && (
+          <Link
+            to="/hospital-portal"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 transition"
+          >
+            <span>🏥 Hospital Desk</span>
+          </Link>
+        )}
+
         {/* Family Switcher */}
         <FamilyProfileSwitcher onOpenAddMember={() => navigate("/profile")} />
 

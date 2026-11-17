@@ -57,6 +57,13 @@ function Navbar() {
                 >
                   Doctor Station
                 </Link>
+              ) : user.role === "hospital" ? (
+                <Link
+                  to="/hospital-portal"
+                  className="text-sm font-semibold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 px-3.5 py-1.5 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/40 transition"
+                >
+                  Hospital Desk
+                </Link>
               ) : (
                 <Link
                   to="/dashboard"
@@ -76,13 +83,19 @@ function Navbar() {
             <>
               <Link
                 to="/login?role=doctor"
-                className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition flex items-center gap-1.5"
+                className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 px-2.5 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition flex items-center gap-1.5"
               >
-                <span>Doctor Portal</span>
+                <span>Doctor</span>
+              </Link>
+              <Link
+                to="/login?role=hospital"
+                className="text-sm font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition flex items-center gap-1.5"
+              >
+                <span>Hospital</span>
               </Link>
               <Link
                 to="/login"
-                className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
               >
                 Sign in
               </Link>
@@ -141,11 +154,17 @@ function Navbar() {
             {user ? (
               <>
                 <Link
-                  to={user.role === "doctor" ? "/doctor-portal" : "/dashboard"}
+                  to={user.role === "doctor" ? "/doctor-portal" : user.role === "hospital" ? "/hospital-portal" : "/dashboard"}
                   onClick={() => setMobileMenu(false)}
-                  className="w-full text-center bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-medium"
+                  className={`w-full text-center text-white py-2.5 rounded-lg text-sm font-medium ${
+                    user.role === "hospital" ? "bg-rose-700" : user.role === "doctor" ? "bg-emerald-600" : "bg-slate-900 dark:bg-blue-600"
+                  }`}
                 >
-                  {user.role === "doctor" ? "Open Doctor Station" : "Go to Dashboard"}
+                  {user.role === "doctor"
+                    ? "Open Doctor Station"
+                    : user.role === "hospital"
+                    ? "Open Hospital Desk"
+                    : "Go to Dashboard"}
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -156,13 +175,22 @@ function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to="/login?role=doctor"
-                  onClick={() => setMobileMenu(false)}
-                  className="w-full text-center bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 py-2.5 rounded-lg text-sm font-semibold"
-                >
-                  Doctor Sign In Portal
-                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to="/login?role=doctor"
+                    onClick={() => setMobileMenu(false)}
+                    className="text-center bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 py-2 rounded-lg text-xs font-semibold"
+                  >
+                    Doctor Portal
+                  </Link>
+                  <Link
+                    to="/login?role=hospital"
+                    onClick={() => setMobileMenu(false)}
+                    className="text-center bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 text-rose-800 dark:text-rose-300 py-2 rounded-lg text-xs font-semibold"
+                  >
+                    Hospital Desk
+                  </Link>
+                </div>
                 <Link
                   to="/login"
                   onClick={() => setMobileMenu(false)}

@@ -13,6 +13,7 @@ import Profile from "../pages/HumanProfile/Profile";
 import PersonalDetails from "../pages/PersonalDetails/PersonalDetails";
 import AdminPortal from "../pages/Admin/AdminPortal";
 import DoctorPortal from "../pages/Doctor/DoctorPortal";
+import HospitalPortal from "../pages/Hospital/HospitalPortal";
 import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
@@ -124,6 +125,18 @@ function AppRoutes() {
       />
       <Route path="/doctor" element={<Navigate to="/doctor-portal" replace />} />
       <Route path="/doctor-login" element={<Navigate to="/login?role=doctor" replace />} />
+
+      {/* Dedicated Hospital Operations Portal (Only Emergency Blood & Available Doctors) */}
+      <Route
+        path="/hospital-portal"
+        element={
+          <ProtectedRoute allowedRoles={["hospital", "admin"]}>
+            <HospitalPortal />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/hospital" element={<Navigate to="/hospital-portal" replace />} />
+      <Route path="/hospital-login" element={<Navigate to="/login?role=hospital" replace />} />
 
       {/* Admin Maintenance Portal (Has built-in master access gate) */}
       <Route path="/admin" element={<AdminPortal />} />

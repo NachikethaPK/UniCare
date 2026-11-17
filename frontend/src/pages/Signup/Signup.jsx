@@ -68,7 +68,7 @@ function Signup() {
 
   useEffect(() => {
     if (user) {
-      const destination = redirectFrom || (user.role === "hospital" ? "/blood" : user.role === "doctor" ? "/doctor-portal" : "/dashboard");
+      const destination = redirectFrom || (user.role === "hospital" ? "/hospital-portal" : user.role === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     }
   }, [user, redirectFrom, navigate]);
@@ -174,7 +174,7 @@ function Signup() {
 
     setLoading(false);
     if (result.success) {
-      const destination = redirectFrom || (roleTab === "hospital" ? "/blood" : roleTab === "doctor" ? "/doctor-portal" : "/dashboard");
+      const destination = redirectFrom || (roleTab === "hospital" ? "/hospital-portal" : roleTab === "doctor" ? "/doctor-portal" : "/dashboard");
       navigate(destination, { replace: true });
     } else {
       setError(result.message);

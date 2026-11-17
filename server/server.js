@@ -11,6 +11,7 @@ import healthRecordRoutes from "./routes/healthRecordRoutes.js";
 import petRoutes from "./routes/petRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import patientHistoryRoutes from "./routes/patientHistoryRoutes.js";
+import hospitalDoctorRoutes from "./routes/hospitalDoctorRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/patient-history", patientHistoryRoutes);
+app.use("/api/hospital-doctors", hospitalDoctorRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/blood", bloodDonationRoutes);
 app.use("/api/records", healthRecordRoutes);

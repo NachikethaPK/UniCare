@@ -12,7 +12,7 @@ import {
   FiLogOut,
   FiX,
 } from "react-icons/fi";
-import { FaUserMd } from "react-icons/fa";
+import { FaUserMd, FaHospital } from "react-icons/fa";
 import ThemeToggle from "../common/ThemeToggle";
 import UniCareLogo from "../common/UniCareLogo";
 
@@ -33,6 +33,14 @@ function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
             name: "Doctor Station",
             icon: <FaUserMd className="w-4 h-4 text-emerald-400" />,
             path: "/doctor-portal",
+          },
+        ]
+      : user?.role === "hospital"
+      ? [
+          {
+            name: "Hospital Desk",
+            icon: <FaHospital className="w-4 h-4 text-rose-400" />,
+            path: "/hospital-portal",
           },
         ]
       : []),
