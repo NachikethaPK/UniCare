@@ -4,7 +4,7 @@ import { useAuth } from "./AuthContext";
 
 const PetContext = createContext();
 
-const defaultPets = [
+const demoPets = [
   { id: "pet-1", name: "Bruno", species: "Dog", breed: "Labrador Retriever", age: "3 Years", owner: "Chandrika Sharma" },
   { id: "pet-2", name: "Coco", species: "Cat", breed: "Persian Cat", age: "2 Years", owner: "Chandrika Sharma" }
 ];
@@ -83,58 +83,173 @@ export function PetProvider({ children }) {
   const userId = user ? (user.id || user.email) : "guest";
   const [sortOrder, setSortOrder] = useState("desc"); // "desc" = newest internal clinical date first, "asc" = oldest first
 
+  // A new profile has NO default pets - user will add their pets
   const [pets, setPets] = useState(() => {
     const saved = localStorage.getItem(`unicare_pets_${userId}`);
-    return saved ? JSON.parse(saved) : defaultPets;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          if (user && user.email !== "chandrika@example.com") {
+            return parsed.filter(
+              (p) => !(p.owner === "Chandrika Sharma" && (p.name === "Bruno" || p.name === "Coco"))
+            );
+          }
+          return parsed;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (userId === "demo-user-123" || userId === "chandrika@example.com") {
+      return demoPets;
+    }
+    return [];
   });
 
-  const [activePetId, setActivePetId] = useState(() => pets[0]?.id || "pet-1");
+  const [activePetId, setActivePetId] = useState(() => pets[0]?.id || null);
 
   const [vaccinations, setVaccinations] = useState(() => {
     const saved = localStorage.getItem(`unicare_pet_vaccinations_${userId}`);
-    return saved ? JSON.parse(saved) : defaultVaccinations;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (userId === "demo-user-123" || userId === "chandrika@example.com") {
+      return defaultVaccinations;
+    }
+    return [];
   });
 
   const [appointments, setAppointments] = useState(() => {
     const saved = localStorage.getItem(`unicare_pet_appointments_${userId}`);
-    return saved ? JSON.parse(saved) : [
-      {
-        id: "pet-app-1",
-        petId: "pet-1",
-        veterinarian: "Dr. Rajesh Vet Clinic",
-        date: "2026-08-20",
-        time: "10:00 AM",
-        reason: "Annual Wellness Checkup",
-        reminderEnabled: true,
-        reminderTime: "1 day before",
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
       }
-    ];
+    }
+    if (userId === "demo-user-123" || userId === "chandrika@example.com") {
+      return [
+        {
+          id: "pet-app-1",
+          petId: "pet-1",
+          veterinarian: "Dr. Rajesh Vet Clinic",
+          date: "2026-08-20",
+          time: "10:00 AM",
+          reason: "Annual Wellness Checkup",
+          reminderEnabled: true,
+          reminderTime: "1 day before",
+        }
+      ];
+    }
+    return [];
   });
 
   const [records, setRecords] = useState(() => {
     const saved = localStorage.getItem(`unicare_pet_records_${userId}`);
-    return saved ? JSON.parse(saved) : defaultPetRecords;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (userId === "demo-user-123" || userId === "chandrika@example.com") {
+      return defaultPetRecords;
+    }
+    return [];
   });
 
   // Re-sync when user changes
   useEffect(() => {
     if (user) {
+      const savedPets = localStorage.getItem(`unicare_pets_${userId}`);
+      let userPets = [];
+      if (savedPets) {
+        try {
+          const parsed = JSON.parse(savedPets);
+          if (Array.isArray(parsed)) {
+            userPets =
+              user.email !== "chandrika@example.com"
+                ? parsed.filter(
+                    (p) => !(p.owner === "Chandrika Sharma" && (p.name === "Bruno" || p.name === "Coco"))
+                  )
+                : parsed;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      } else if (userId === "demo-user-123" || userId === "chandrika@example.com") {
+        userPets = demoPets;
+      }
+      setPets(userPets);
+      setActivePetId(userPets[0]?.id || userPets[0]?._id || null);
+
+      const savedVacc = localStorage.getItem(`unicare_pet_vaccinations_${userId}`);
+      if (savedVacc) {
+        try {
+          setVaccinations(JSON.parse(savedVacc));
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        setVaccinations(
+          userId === "demo-user-123" || userId === "chandrika@example.com"
+            ? defaultVaccinations
+            : []
+        );
+      }
+
+      const savedRec = localStorage.getItem(`unicare_pet_records_${userId}`);
+      if (savedRec) {
+        try {
+          setRecords(JSON.parse(savedRec));
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        setRecords(
+          userId === "demo-user-123" || userId === "chandrika@example.com"
+            ? defaultPetRecords
+            : []
+        );
+      }
+
+      const savedApp = localStorage.getItem(`unicare_pet_appointments_${userId}`);
+      if (savedApp) {
+        try {
+          setAppointments(JSON.parse(savedApp));
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        setAppointments([]);
+      }
+
       const fetchData = async () => {
         try {
           const [petsRes, vaccRes, recRes] = await Promise.all([
             api.get("/pets"),
             api.get("/pets/vaccinations"),
-            api.get(`/pets/records?sort_order=${sortOrder}`)
+            api.get(`/pets/records?sort_order=${sortOrder}`),
           ]);
-          if (petsRes.data?.length > 0) {
-            setPets(petsRes.data.map(p => ({ ...p, id: p._id || p.id })));
-            setActivePetId(petsRes.data[0]._id || petsRes.data[0].id);
+          if (petsRes.data && Array.isArray(petsRes.data)) {
+            const mappedPets = petsRes.data.map((p) => ({ ...p, id: p._id || p.id }));
+            setPets(mappedPets);
+            setActivePetId(mappedPets[0]?.id || null);
           }
-          if (vaccRes.data?.length > 0) {
-            setVaccinations(vaccRes.data.map(v => ({ ...v, id: v._id || v.id })));
+          if (vaccRes.data && Array.isArray(vaccRes.data)) {
+            setVaccinations(vaccRes.data.map((v) => ({ ...v, id: v._id || v.id })));
           }
-          if (recRes.data?.length > 0) {
-            setRecords(recRes.data.map(r => ({ ...r, id: r._id || r.id, petId: r.pet || r.petId })));
+          if (recRes.data && Array.isArray(recRes.data)) {
+            setRecords(
+              recRes.data.map((r) => ({ ...r, id: r._id || r.id, petId: r.pet || r.petId }))
+            );
           }
         } catch (error) {
           console.warn("Using local pet state:", error.message);
@@ -142,7 +257,7 @@ export function PetProvider({ children }) {
       };
       fetchData();
     }
-  }, [user, sortOrder]);
+  }, [user, userId, sortOrder]);
 
   useEffect(() => {
     localStorage.setItem(`unicare_pets_${userId}`, JSON.stringify(pets));
@@ -207,8 +322,8 @@ export function PetProvider({ children }) {
     }
     setPets((items) => {
       const remaining = items.filter((p) => p.id !== petId && p._id !== petId);
-      if (activePetId === petId && remaining.length > 0) {
-        setActivePetId(remaining[0].id || remaining[0]._id);
+      if (activePetId === petId) {
+        setActivePetId(remaining[0]?.id || remaining[0]?._id || null);
       }
       return remaining;
     });

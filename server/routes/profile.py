@@ -1,4 +1,5 @@
 import datetime
+from bson import ObjectId
 from fastapi import APIRouter, Depends, status
 from config.db import get_db
 from middleware.auth import get_current_user
@@ -11,6 +12,9 @@ router = APIRouter(prefix="/api/profile", tags=["Profile"])
 async def get_profile(user_id: str = Depends(get_current_user)):
     db = get_db()
     profile = await db.profiles.find_one({"user": user_id})
+    user_query = {"_id": ObjectId(user_id)} if ObjectId.is_valid(user_id) else {"_id": user_id}
+    user_doc = await db.users.find_one(user_query)
+
     if not profile:
         now = datetime.datetime.now(datetime.timezone.utc)
         default_profile = {
@@ -21,7 +25,12 @@ async def get_profile(user_id: str = Depends(get_current_user)):
         }
         result = await db.profiles.insert_one(default_profile)
         profile = await db.profiles.find_one({"_id": result.inserted_id})
-    return serialize_doc(profile)
+
+    serialized = serialize_doc(profile)
+    if user_doc:
+        serialized["name"] = user_doc.get("name", "")
+        serialized["email"] = user_doc.get("email", "")
+    return serialized
 
 @router.put("")
 async def update_profile(
@@ -42,4 +51,11 @@ async def update_profile(
         upsert=True,
         return_document=True
     )
-    return serialize_doc(updated)
+    user_query = {"_id": ObjectId(user_id)} if ObjectId.is_valid(user_id) else {"_id": user_id}
+    user_doc = await db.users.find_one(user_query)
+
+    serialized = serialize_doc(updated)
+    if user_doc:
+        serialized["name"] = user_doc.get("name", "")
+        serialized["email"] = user_doc.get("email", "")
+    return serialized

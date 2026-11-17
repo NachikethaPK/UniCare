@@ -57,6 +57,24 @@ export default function PersonalDetails() {
   const [copiedKey, setCopiedKey] = useState(false);
 
   useEffect(() => {
+    if (profile || user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: profile?.name || user?.name || prev.name,
+        email: profile?.email || user?.email || prev.email,
+        phone: profile?.phone ?? prev.phone,
+        dob: profile?.dob ?? prev.dob,
+        gender: profile?.gender ?? prev.gender,
+        bloodGroup: profile?.bloodGroup || activeProfile?.bloodGroup || prev.bloodGroup,
+        address: profile?.address ?? prev.address,
+        city: profile?.city ?? prev.city,
+        allergies: profile?.allergies ?? prev.allergies,
+        emergencyNotes: profile?.emergencyNotes ?? prev.emergencyNotes,
+      }));
+    }
+  }, [profile, user, activeProfile]);
+
+  useEffect(() => {
     setFamilyName(familyVault?.householdName || "");
   }, [familyVault]);
 
@@ -183,7 +201,7 @@ export default function PersonalDetails() {
               <FiUsers className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Enter your family name (e.g. The Sharma Family, Kumar Household)"
+                placeholder="Enter your family name (e.g. The Smith Family, Kumar Household)"
                 value={familyName}
                 onChange={(e) => setFamilyName(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-slate-800"

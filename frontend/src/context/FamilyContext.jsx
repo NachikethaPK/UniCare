@@ -57,9 +57,18 @@ export function FamilyProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const filtered = parsed.filter(
-            (p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma"
-          );
+          const filtered = parsed
+            .filter((p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma")
+            .map((p) => {
+              if (
+                (p.relationship === "Self (Primary)" || p.name === "Chandrika Sharma") &&
+                user?.name &&
+                user?.email !== "chandrika@example.com"
+              ) {
+                return { ...p, name: user.name };
+              }
+              return p;
+            });
           if (filtered.length > 0) return filtered;
         }
       } catch (e) {
@@ -124,9 +133,18 @@ export function FamilyProvider({ children }) {
         try {
           const parsed = JSON.parse(savedProfiles);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const filtered = parsed.filter(
-              (p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma"
-            );
+            const filtered = parsed
+              .filter((p) => p.name !== "Rohan Sharma" && p.name !== "Aarav Sharma")
+              .map((p) => {
+                if (
+                  (p.relationship === "Self (Primary)" || p.name === "Chandrika Sharma") &&
+                  user.name &&
+                  user.email !== "chandrika@example.com"
+                ) {
+                  return { ...p, name: user.name };
+                }
+                return p;
+              });
             if (filtered.length > 0) {
               setProfiles(filtered);
               setActiveProfileId(filtered[0].id);

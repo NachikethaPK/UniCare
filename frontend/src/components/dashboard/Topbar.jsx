@@ -96,8 +96,8 @@ function Topbar({ onToggleMobile = () => {}, pageTitle = "Dashboard" }) {
                   <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Cardiology follow-up with Dr. Sarah Chen tomorrow at 10:30 AM.</p>
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-850 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
-                  <p className="font-semibold text-slate-900 dark:text-slate-200">Vaccine Booster Reminder</p>
-                  <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Bruno's Rabies vaccination window is scheduled next week.</p>
+                  <p className="font-semibold text-slate-900 dark:text-slate-200">Health Reminder</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Annual preventive health checkup window is currently open.</p>
                 </div>
               </div>
             </div>

@@ -13,11 +13,16 @@ export function ProfileProvider({ children }) {
   const notifKey = `unicare_notifications_${userId}`;
 
   const [profile, setProfileState] = useState(() => {
-    const saved = localStorage.getItem(profileKey) || localStorage.getItem("unicare_profile");
+    const saved = localStorage.getItem(profileKey);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.email === user?.email || !user) return parsed;
+        if (parsed.email === user?.email || !user) {
+          if (parsed.name === "Chandrika Sharma" && user?.name && user.name !== "Chandrika Sharma") {
+            parsed.name = user.name;
+          }
+          return parsed;
+        }
       } catch (e) {
         console.error(e);
       }
@@ -75,11 +80,34 @@ export function ProfileProvider({ children }) {
 
   useEffect(() => {
     if (user) {
-      setProfileState((prev) => ({
-        ...prev,
-        name: user.name || prev.name,
-        email: user.email || prev.email,
-      }));
+      const saved = localStorage.getItem(profileKey);
+      let initialData = {
+        name: user.name || "User",
+        email: user.email || "",
+        phone: "",
+        dob: "",
+        gender: "",
+      };
+
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          initialData = {
+            ...initialData,
+            ...parsed,
+            name:
+              (parsed.name && parsed.name !== "Chandrika Sharma") ||
+              user.email === "chandrika@example.com"
+                ? parsed.name
+                : user.name || "User",
+            email: user.email || parsed.email || "",
+          };
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      setProfileState(initialData);
 
       const fetchProfile = async () => {
         try {
@@ -87,6 +115,8 @@ export function ProfileProvider({ children }) {
           if (res.data) {
             setProfileState((prev) => ({
               ...prev,
+              name: user.name || res.data.name || prev.name,
+              email: user.email || res.data.email || prev.email,
               phone: res.data.phone || prev.phone,
               dob: res.data.dob || prev.dob,
               gender: res.data.gender || prev.gender,
@@ -101,7 +131,7 @@ export function ProfileProvider({ children }) {
       };
       fetchProfile();
     }
-  }, [user]);
+  }, [user, profileKey]);
 
   useEffect(() => {
     localStorage.setItem(profileKey, JSON.stringify(profile));

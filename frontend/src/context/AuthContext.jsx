@@ -201,9 +201,17 @@ export function AuthProvider({ children }) {
       const response = await api.post("/auth/register", payload);
       const { token: resToken, user: resUser } = response.data;
 
+      const userObj = {
+        ...resUser,
+        name: resUser.name || name,
+        email: resUser.email || cleanEmail,
+        role: resUser.role || role,
+        hospitalDetails: resUser.hospitalDetails || hospitalDetails,
+      };
+
       const newAcc = {
-        id: resUser.id,
-        name,
+        id: userObj.id,
+        name: userObj.name,
         email: cleanEmail,
         password,
         role,
@@ -212,10 +220,49 @@ export function AuthProvider({ children }) {
       setRegisteredAccounts((prev) => [...prev, newAcc]);
 
       localStorage.setItem("token", resToken);
-      localStorage.setItem("user", JSON.stringify(resUser));
+      localStorage.setItem("user", JSON.stringify(userObj));
       setToken(resToken);
-      setUser(resUser);
-      return { success: true, user: resUser };
+      setUser(userObj);
+
+      // Clean profile initialization for new profile - default name is the signup name
+      const initialProfile = {
+        name: userObj.name,
+        email: cleanEmail,
+        phone: "",
+        dob: "",
+        gender: "",
+      };
+      localStorage.setItem(`unicare_profile_${userObj.id}`, JSON.stringify(initialProfile));
+      localStorage.setItem("unicare_profile", JSON.stringify(initialProfile));
+
+      // Clean primary family profile initialized with signup name
+      const initialFamilyProfile = {
+        id: `prof-${userObj.id}`,
+        name: userObj.name,
+        relationship: "Self (Primary)",
+        age: "",
+        bloodGroup: "",
+        role: "Family Admin",
+        pinEnabled: false,
+        pin: "",
+        avatarColor: "bg-blue-600",
+      };
+      localStorage.setItem(`unicare_family_profiles_${userObj.id}`, JSON.stringify([initialFamilyProfile]));
+      localStorage.setItem(`unicare_active_profile_${userObj.id}`, initialFamilyProfile.id);
+      localStorage.setItem(`unicare_family_vault_${userObj.id}`, JSON.stringify({
+        householdName: "",
+        inviteCode: `FAM-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`,
+        adminEmail: cleanEmail,
+        createdDate: new Date().toISOString().split("T")[0],
+      }));
+
+      // Do NOT add default pets when a new profile is created
+      localStorage.setItem(`unicare_pets_${userObj.id}`, JSON.stringify([]));
+      localStorage.setItem(`unicare_pet_vaccinations_${userObj.id}`, JSON.stringify([]));
+      localStorage.setItem(`unicare_pet_appointments_${userObj.id}`, JSON.stringify([]));
+      localStorage.setItem(`unicare_pet_records_${userObj.id}`, JSON.stringify([]));
+
+      return { success: true, user: userObj };
     } catch (error) {
       // If server explicitly returned a validation or business logic error, don't fallback to dummy user
       if (error.response?.data?.message) {
@@ -248,6 +295,45 @@ export function AuthProvider({ children }) {
       localStorage.setItem("user", JSON.stringify(newUser));
       setToken(demoToken);
       setUser(newUser);
+
+      // Clean profile initialization for new profile - default name is the signup name
+      const initialProfile = {
+        name: newUser.name,
+        email: cleanEmail,
+        phone: "",
+        dob: "",
+        gender: "",
+      };
+      localStorage.setItem(`unicare_profile_${newUserId}`, JSON.stringify(initialProfile));
+      localStorage.setItem("unicare_profile", JSON.stringify(initialProfile));
+
+      // Clean primary family profile initialized with signup name
+      const initialFamilyProfile = {
+        id: `prof-${newUserId}`,
+        name: newUser.name,
+        relationship: "Self (Primary)",
+        age: "",
+        bloodGroup: "",
+        role: "Family Admin",
+        pinEnabled: false,
+        pin: "",
+        avatarColor: "bg-blue-600",
+      };
+      localStorage.setItem(`unicare_family_profiles_${newUserId}`, JSON.stringify([initialFamilyProfile]));
+      localStorage.setItem(`unicare_active_profile_${newUserId}`, initialFamilyProfile.id);
+      localStorage.setItem(`unicare_family_vault_${newUserId}`, JSON.stringify({
+        householdName: "",
+        inviteCode: `FAM-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`,
+        adminEmail: cleanEmail,
+        createdDate: new Date().toISOString().split("T")[0],
+      }));
+
+      // Do NOT add default pets when a new profile is created
+      localStorage.setItem(`unicare_pets_${newUserId}`, JSON.stringify([]));
+      localStorage.setItem(`unicare_pet_vaccinations_${newUserId}`, JSON.stringify([]));
+      localStorage.setItem(`unicare_pet_appointments_${newUserId}`, JSON.stringify([]));
+      localStorage.setItem(`unicare_pet_records_${newUserId}`, JSON.stringify([]));
+
       return { success: true, user: newUser };
     }
   };
@@ -255,6 +341,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("unicare_profile");
     setToken(null);
     setUser(null);
   };

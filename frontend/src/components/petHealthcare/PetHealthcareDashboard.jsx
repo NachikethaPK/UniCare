@@ -97,14 +97,7 @@ export default function PetHealthcareDashboard() {
     setSortOrder
   } = usePets();
 
-  const activePet = pets.find((p) => p.id === activePetId || p._id === activePetId) || pets[0] || {
-    id: "default-pet",
-    name: "My Pet",
-    species: "Dog",
-    breed: "Labrador",
-    age: "2 Years",
-    owner: "Pet Parent"
-  };
+  const activePet = pets.find((p) => p.id === activePetId || p._id === activePetId) || pets[0] || null;
 
   const [showAddPetModal, setShowAddPetModal] = useState(false);
   const [newPet, setNewPet] = useState({ name: "", species: "Dog", breed: "", age: "" });
@@ -173,25 +166,33 @@ export default function PetHealthcareDashboard() {
     }
   };
 
-  const petVaccinations = vaccinations.filter((v) => (v.petId || v.pet) === (activePet.id || activePet._id));
-  const petAppointments = appointments.filter((a) => (a.petId || a.pet) === (activePet.id || activePet._id));
+  const petVaccinations = activePet
+    ? vaccinations.filter((v) => (v.petId || v.pet) === (activePet.id || activePet._id))
+    : [];
+  const petAppointments = activePet
+    ? appointments.filter((a) => (a.petId || a.pet) === (activePet.id || activePet._id))
+    : [];
   
   // Filtered records for the currently active pet
-  const petRecords = searchRecords(recordQuery, selectedCategory, activePet.id || activePet._id).filter((rec) => {
-    if (!selectedTag) return true;
-    const recTags = rec.tags || [];
-    return recTags.some((t) => t.toLowerCase() === selectedTag.toLowerCase());
-  });
+  const petRecords = activePet
+    ? searchRecords(recordQuery, selectedCategory, activePet.id || activePet._id).filter((rec) => {
+        if (!selectedTag) return true;
+        const recTags = rec.tags || [];
+        return recTags.some((t) => t.toLowerCase() === selectedTag.toLowerCase());
+      })
+    : [];
 
   // Extract unique tags for active pet records
-  const activePetUniqueTags = Array.from(
-    new Set(
-      records
-        .filter((r) => (r.petId || r.pet) === (activePet.id || activePet._id))
-        .flatMap((r) => r.tags || [])
-        .filter(Boolean)
-    )
-  );
+  const activePetUniqueTags = activePet
+    ? Array.from(
+        new Set(
+          records
+            .filter((r) => (r.petId || r.pet) === (activePet.id || activePet._id))
+            .flatMap((r) => r.tags || [])
+            .filter(Boolean)
+        )
+      )
+    : [];
 
   const readFileAsDataURL = (file) => {
     return new Promise((resolve) => {
@@ -205,6 +206,7 @@ export default function PetHealthcareDashboard() {
 
   const handleAddPetSubmit = (e) => {
     e.preventDefault();
+    if (!newPet.name.trim()) return;
     addPet(newPet);
     setNewPet({ name: "", species: "Dog", breed: "", age: "" });
     setShowAddPetModal(false);
@@ -214,6 +216,7 @@ export default function PetHealthcareDashboard() {
 
   const handleVaccineSubmit = (e) => {
     e.preventDefault();
+    if (!activePet) return;
     addVaccination({ ...vaccine, petId: activePet.id || activePet._id });
     setVaccine({ name: "", date: "", nextDue: "" });
     setNotice("Vaccination recorded!");
@@ -222,6 +225,7 @@ export default function PetHealthcareDashboard() {
 
   const handleVetSubmit = (e) => {
     e.preventDefault();
+    if (!activePet) return;
     addAppointment({ ...vet, petId: activePet.id || activePet._id });
     if (vet.reminderEnabled && "Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
@@ -301,6 +305,7 @@ export default function PetHealthcareDashboard() {
 
   const handleSaveRecord = async (e) => {
     e.preventDefault();
+    if (!activePet) return;
     let fileUrl = "#";
     if (recordForm.file) {
       fileUrl = await readFileAsDataURL(recordForm.file);
@@ -396,8 +401,30 @@ export default function PetHealthcareDashboard() {
         </div>
       )}
 
-      {/* Pet Selector Tabs */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-1">
+      {pets.length === 0 ? (
+        <section className="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-100 text-center space-y-4 max-w-xl mx-auto my-6">
+          <div className="w-20 h-20 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-4xl mx-auto shadow-inner">
+            <FaPaw />
+          </div>
+          <div>
+            <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">No Pets Registered Yet</h2>
+            <p className="text-slate-500 text-sm mt-1.5 max-w-md mx-auto">
+              Your pet healthcare vault is clean and ready. Add your companion pet profile to start organizing vaccinations, booking vet appointments, and scanning medical reports.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddPetModal(true)}
+            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-2xl transition shadow-md active:scale-95 text-sm"
+          >
+            <FaPlus />
+            <span>Add Your First Pet</span>
+          </button>
+        </section>
+      ) : activePet ? (
+        <>
+          {/* Pet Selector Tabs */}
+          <div className="flex items-center gap-3 overflow-x-auto pb-1">
         {pets.map((p) => {
           const isSelected = (activePet.id || activePet._id) === (p.id || p._id);
           return (
@@ -932,6 +959,8 @@ export default function PetHealthcareDashboard() {
           </div>
         </form>
       </div>
+        </>
+      ) : null}
 
       {/* ---------------- Upload & Analyze Pet Report Modal ---------------- */}
       {showRecordUploadModal && (
@@ -939,7 +968,7 @@ export default function PetHealthcareDashboard() {
           <div className="w-full max-w-lg bg-white rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Upload & Analyze Pet Document ({activePet.name})</h3>
+                <h3 className="text-lg font-bold text-slate-900">Upload & Analyze Pet Document ({activePet?.name || "Pet"})</h3>
                 <p className="text-xs text-slate-500">Treatment date, category & veterinary tags are auto-detected by OCR AI.</p>
               </div>
               <button

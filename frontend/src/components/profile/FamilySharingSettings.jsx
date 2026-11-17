@@ -418,7 +418,7 @@ export default function FamilySharingSettings() {
                 required
                 type="text"
                 className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-                placeholder="e.g. Rohan Sharma"
+                placeholder="e.g. Alex Doe"
                 value={newMember.name}
                 onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
               />
@@ -661,7 +661,7 @@ export default function FamilySharingSettings() {
                 required
                 type="text"
                 className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-                placeholder="e.g. Bruno"
+                placeholder="e.g. Max or Milo"
                 value={newPetData.name}
                 onChange={(e) => setNewPetData({ ...newPetData, name: e.target.value })}
               />
